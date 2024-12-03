@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/game_setup.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
-  seedColor: Color.fromARGB(255, 205, 33, 205),
+  seedColor: Color.fromARGB(255, 1, 29, 53),
 );
 
 var kDarkColorScheme = ColorScheme.fromSeed(
@@ -11,10 +11,7 @@ var kDarkColorScheme = ColorScheme.fromSeed(
 );
 
 void main() {
-  //WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations([
-  // DeviceOrientation.portraitUp,
-  // ]).then((fn){
+
   runApp(
     MaterialApp(
       title: 'Family Game Night',
