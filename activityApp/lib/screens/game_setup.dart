@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'game_page.dart';
-import '../models/games.dart';
-import 'dart:math';
 
 class GameSetup extends StatefulWidget {
   @override
@@ -9,80 +7,150 @@ class GameSetup extends StatefulWidget {
 }
 
 class _GameSetupState extends State<GameSetup> {
-  TextEditingController _nameController = TextEditingController();
-  int rounds = 1;
-  List<String> players = [];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Family Game Night")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image(
-              image: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA0UTfT73CQZwJmfedJSzlS0SJEt8hTT-QPQ&s"),
-            ),
-            Text('Enter Player Name', style: TextStyle(fontSize: 24)),
-            TextField(controller: _nameController, decoration: InputDecoration(hintText: 'Player Name')),
-            SizedBox(height: 20),
-            ElevatedButton(onPressed: _addPlayer, child: Text('Add Player')),
-            SizedBox(height: 20),
-            Text('Choose Number of Rounds', style: TextStyle(fontSize: 18)),
-            DropdownButton<int>(
-              value: rounds,
-              items: List.generate(10, (index) {
-                return DropdownMenuItem(child: Text('${index + 1} Rounds'), value: index + 1);
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  rounds = value!;
-                });
-              },
-            ),
-            if (players.isNotEmpty && rounds > 0)
-              ElevatedButton(onPressed: _startGame, child: Text('Start Game')),
-
-            // Display player names on the main menu
-            SizedBox(height: 20),
-            Text('Players:', style: TextStyle(fontSize: 18)),
-            ...players.map((player) => Text(player, style: TextStyle(fontSize: 16))),
-          ],
-        ),
-      ),
-    );
-  }
+  final TextEditingController _playerController = TextEditingController();
+  List<String> _players = [];
+  int _rounds = 5;
 
   void _addPlayer() {
-    if (_nameController.text.isNotEmpty) {
+    if (_playerController.text.isNotEmpty) {
       setState(() {
-        players.add(_nameController.text);
-        _nameController.clear();
+        _players.add(_playerController.text.trim());
+        _playerController.clear();
       });
     }
   }
 
-  void _startGame() {
-    if (players.isNotEmpty && rounds > 0) {
-      // Select a random game
-      final randomGame = Game.getMiniGames()[Random().nextInt(Game.getMiniGames().length)];
+  void _removePlayer(String player) {
+    setState(() {
+      _players.remove(player);
+    });
+  }
 
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => GamePage(
-          players: players,
-          rounds: rounds,
-          initialGame: randomGame,
-          onQuit: _quitGame,
+  void _startGame() {
+    if (_players.isNotEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => GamePage(
+            players: _players,
+            rounds: _rounds,
+            onQuit: () {
+              setState(() {
+                _players.clear();
+              });
+              Navigator.of(context).pop(); // Return to main menu
+            },
+          ),
         ),
-      ));
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please add at least one player to start the game!'),
+        ),
+      );
     }
   }
 
-  void _quitGame() {
-    setState(() {
-      players.clear(); // Clear players when quitting
-    });
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF2196F3), Color(0xFF64B5F6)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 30),
+                Image.network(
+                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA0UTfT73CQZwJmfedJSzlS0SJEt8hTT-QPQ&s",
+                  height: 150,
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Family Game Night',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _playerController,
+                  decoration: InputDecoration(
+                    labelText: 'Enter Player Name',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onSubmitted: (_) => _addPlayer(),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: _addPlayer,
+                  child: const Text('Add Player'),
+                ),
+                const SizedBox(height: 20),
+                if (_players.isNotEmpty) ...[
+                  Text(
+                    'Players:',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _players.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          child: ListTile(
+                            title: Text(_players[index]),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () => _removePlayer(_players[index]),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Number of Rounds:'),
+                    const SizedBox(width: 10),
+                    DropdownButton<int>(
+                      value: _rounds,
+                      items: List.generate(
+                        10,
+                            (index) => DropdownMenuItem(
+                          value: index + 1,
+                          child: Text('${index + 1}'),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _rounds = value!;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _startGame,
+                  child: const Text('Start Game'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
