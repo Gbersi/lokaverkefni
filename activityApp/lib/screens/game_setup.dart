@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'game_page.dart';
 
 class GameSetup extends StatefulWidget {
+  const GameSetup({super.key});
+
   @override
   _GameSetupState createState() => _GameSetupState();
 }
@@ -37,8 +39,8 @@ class _GameSetupState extends State<GameSetup> {
               setState(() {
                 _players.clear();
               });
-              Navigator.of(context).pop(); // Return to main menu
-            },
+              Navigator.of(context).pop();
+            }, availableGames: [],
           ),
         ),
       );
