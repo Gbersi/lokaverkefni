@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:activityapp/models/games.dart';
+import 'player_selection_page.dart';
+import 'package:activityapp/models/suggestion_page.dart';
 
 class GamePage extends StatefulWidget {
   final List<String> players;
   final int rounds;
   final VoidCallback onQuit;
 
-  const GamePage({
+  const GamePage({super.key,
     required this.players,
     required this.rounds,
     required this.onQuit,
@@ -23,7 +25,7 @@ class _GamePageState extends State<GamePage> {
   int _currentRound = 1;
   late Game _currentGame;
   Timer? _timer;
-  int _remainingTime = 0;
+  int _remainingTime = 30;
   bool _isTimerRunning = false;
 
   @override
@@ -33,12 +35,9 @@ class _GamePageState extends State<GamePage> {
     _selectRandomGame();
   }
 
-  // Dispose method to cancel the timer when leaving the screen
   @override
   void dispose() {
-    if (_timer?.isActive ?? false) {
-      _timer?.cancel();
-    }
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -46,21 +45,33 @@ class _GamePageState extends State<GamePage> {
     final games = getGames();
     final randomIndex = Random().nextInt(games.length);
     _currentGame = games[randomIndex];
-  }
 
-  void _updateScore(int index, int score) {
-    setState(() {
-      _scores[index] += score;
-    });
+    if (_currentGame.name == "Pictionary" || _currentGame.name == "Charades") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PlayerSelectionPage(
+            players: widget.players,
+            message: _currentGame.name == "Pictionary"
+                ? "Choose a player to draw"
+                : "Choose a player to act",
+            suggestions: _currentGame.name == "Pictionary"
+                ? SuggestionPage.pictionarySuggestions
+                : SuggestionPage.charadesSuggestions,
+            onDone: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      );
+    }
   }
 
   void _nextRound() {
-    if (_timer?.isActive ?? false) {
-      _timer?.cancel();
-    }
+    _timer?.cancel();
     setState(() {
-      _remainingTime = 0;
       _isTimerRunning = false;
+      _remainingTime = 30;
       if (_currentRound < widget.rounds) {
         _currentRound++;
         _selectRandomGame();
@@ -76,60 +87,51 @@ class _GamePageState extends State<GamePage> {
       _scores = List.filled(widget.players.length, 0);
       _currentRound = 1;
       _selectRandomGame();
-      _remainingTime = 0;
+      _remainingTime = 30;
       _isTimerRunning = false;
-      if (_timer?.isActive ?? false) {
-        _timer?.cancel();
-      }
     });
-  }
-
-  void _quitGame() {
-    widget.onQuit();
   }
 
   void _showGameOverDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: const Text('Game Over!'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Winner: ${_getWinner()}'),
-            const SizedBox(height: 20),
-            Image.network(
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA0UTfT73CQZwJmfedJSzlS0SJEt8hTT-QPQ&s",
-              height: 200,
-            ),
-          ],
-        ),
+        content: const Text('The game has ended.'),
         actions: [
           ElevatedButton(
             onPressed: _restartGame,
             child: const Text('Restart Game'),
           ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _quitGame();
-            },
-            child: const Text('Quit'),
+            onPressed: widget.onQuit,
+            child: const Text('Main Menu'),
           ),
         ],
       ),
     );
   }
 
-  String _getWinner() {
-    int maxScore = _scores.reduce((a, b) => a > b ? a : b);
-    int winnerIndex = _scores.indexOf(maxScore);
-    return widget.players[winnerIndex];
+  void _startTimer() {
+    _timer?.cancel();
+    setState(() {
+      _isTimerRunning = true;
+    });
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingTime == 0) {
+        timer.cancel();
+        _nextRound();
+      } else {
+        setState(() {
+          _remainingTime--;
+        });
+      }
+    });
   }
 
-  // Method to show the timer setup dialog
-  void _showTimerDialog() {
-    int selectedTime = 30;
+  void _adjustTimer() {
+    int selectedTime = _remainingTime;
     showDialog(
       context: context,
       builder: (context) {
@@ -146,7 +148,7 @@ class _GamePageState extends State<GamePage> {
                     min: 30,
                     max: 120,
                     divisions: 90,
-                    label: selectedTime.toString(),
+                    label: "$selectedTime seconds",
                     onChanged: (value) {
                       setState(() {
                         selectedTime = value.toInt();
@@ -158,14 +160,13 @@ class _GamePageState extends State<GamePage> {
               actions: [
                 ElevatedButton(
                   onPressed: () {
+                    Navigator.of(context).pop();
                     setState(() {
                       _remainingTime = selectedTime;
-                      _isTimerRunning = true;
+                      _isTimerRunning = false;
                     });
-                    Navigator.of(context).pop();
-                    _startTimer();
                   },
-                  child: const Text("Start Timer"),
+                  child: const Text('Set Timer'),
                 ),
               ],
             );
@@ -175,64 +176,34 @@ class _GamePageState extends State<GamePage> {
     );
   }
 
-  // Method to start the timer
-  void _startTimer() {
-    if (_timer?.isActive ?? false) {
-      _timer?.cancel();
-    }
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingTime == 0) {
-        timer.cancel();
-        _showTimeUpDialog();
-      } else {
-        setState(() {
-          _remainingTime--; // Decrease remaining time by 1 each second
-        });
-      }
+  void _updateScore(int index, int score) {
+    setState(() {
+      _scores[index] += score;
     });
-  }
-
-  // Method to show time up dialog
-  void _showTimeUpDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Time's Up!"),
-        content: const Text("The timer has ended."),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Game Page'),
+        title: Text('Round $_currentRound / ${widget.rounds}'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: _quitGame,
+            icon: const Icon(Icons.timer),
+            onPressed: _adjustTimer,
           ),
           IconButton(
-            icon: const Icon(Icons.timer),
-            onPressed: _showTimerDialog, // Show timer setup dialog when tapped
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: widget.onQuit,
           ),
         ],
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1976D2), Color(0xFF64B5F6)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: [Colors.black, Colors.grey],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: Padding(
@@ -240,55 +211,67 @@ class _GamePageState extends State<GamePage> {
           child: Column(
             children: [
               Text(
-                'Round $_currentRound / ${widget.rounds}',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 10),
-              Text(
                 'Game: ${_currentGame.name}',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               Text(
-                'Explanation: ${_currentGame.explanation}',
-                style: Theme.of(context).textTheme.titleMedium,
+                _currentGame.explanation,
+                style: const TextStyle(color: Colors.white70, fontSize: 16, fontStyle: FontStyle.italic),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 20),
-              Image.network(
-                _currentGame.imageUrl,
-                height: 200,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Icon(
-                  Icons.broken_image,
-                  size: 200,
-                  color: Colors.grey,
+              const SizedBox(height: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  _currentGame.imageUrl,
+                  height: 200,
+                  fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(height: 20),
-              // Display the remaining time if any
-              if (_isTimerRunning && _remainingTime > 0)
-                Text(
-                  'Remaining Time: $_remainingTime seconds',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
+              Text(
+                'Time Remaining: ${_isTimerRunning ? _remainingTime : "Not Started"}',
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton.icon(
+                onPressed: _isTimerRunning ? null : _startTimer,
+                icon: const Icon(Icons.timer),
+                label: const Text('Start Timer'),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton.icon(
+                onPressed: _nextRound,
+                icon: const Icon(Icons.skip_next),
+                label: const Text('Next Round'),
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: widget.players.length,
                   itemBuilder: (context, index) {
                     return Card(
+                      color: Colors.grey[800],
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      elevation: 2,
                       child: ListTile(
-                        title: Text(widget.players[index]),
-                        subtitle: Text('Score: ${_scores[index]}'),
+                        title: Text(
+                          widget.players[index],
+                          style: const TextStyle(color: Colors.white),
+                        ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            Text(
+                              _scores[index].toString(),
+                              style: const TextStyle(color: Colors.white),
+                            ),
                             IconButton(
-                              icon: const Icon(Icons.add),
+                              icon: const Icon(Icons.add, color: Colors.green),
                               onPressed: () => _updateScore(index, 1),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.remove),
+                              icon: const Icon(Icons.remove, color: Colors.red),
                               onPressed: () => _updateScore(index, -1),
                             ),
                           ],
@@ -298,11 +281,6 @@ class _GamePageState extends State<GamePage> {
                   },
                 ),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _nextRound,
-                child: const Text('Next Round'),
-              ),
             ],
           ),
         ),
@@ -310,4 +288,3 @@ class _GamePageState extends State<GamePage> {
     );
   }
 }
-
