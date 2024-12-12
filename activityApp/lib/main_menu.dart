@@ -39,7 +39,7 @@ class _MainMenuState extends State<MainMenu> {
         builder: (context) => GamePage(
           players: players,
           rounds: rounds,
-          availableGames: availableGames, 
+          availableGames: availableGames,
           onQuit: () => Navigator.of(context).popUntil((route) => route.isFirst),
         ),
       ),

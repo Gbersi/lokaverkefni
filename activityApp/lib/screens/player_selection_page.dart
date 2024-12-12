@@ -12,8 +12,8 @@ class PlayerSelectionPage extends StatelessWidget {
     required this.message,
     required this.suggestions,
     required this.onDone,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

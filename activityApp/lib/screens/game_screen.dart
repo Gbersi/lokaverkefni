@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:activityapp/models/games.dart';
-import 'dart:async';
 
 class GameScreen extends StatefulWidget {
   final List<String> players;
@@ -11,8 +10,8 @@ class GameScreen extends StatefulWidget {
     required this.players,
     required this.rounds,
     required this.onNextRound,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _GameScreenState createState() => _GameScreenState();

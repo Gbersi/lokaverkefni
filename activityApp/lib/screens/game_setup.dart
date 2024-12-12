@@ -10,7 +10,7 @@ class GameSetup extends StatefulWidget {
 
 class _GameSetupState extends State<GameSetup> {
   final TextEditingController _playerController = TextEditingController();
-  List<String> _players = [];
+  final List<String> _players = [];
   int _rounds = 5;
 
   void _addPlayer() {
@@ -40,7 +40,7 @@ class _GameSetupState extends State<GameSetup> {
                 _players.clear();
               });
               Navigator.of(context).pop();
-            }, availableGames: [],
+            }, availableGames: const [],
           ),
         ),
       );
