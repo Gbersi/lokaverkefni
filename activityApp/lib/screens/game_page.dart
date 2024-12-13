@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:activityapp/models/games.dart';
-import '../models/tic_tac_toe_page.dart';
+import '../Game Functions/mastermind_page.dart';
+import '../Game Functions/tic_tac_toe_page.dart';
 import 'player_selection_page.dart';
 import 'package:activityapp/models/suggestion_page.dart';
+import 'package:activityapp/Game Functions/colorhunt_page.dart';
 
 class GamePage extends StatefulWidget {
   final List<String> players;
@@ -12,7 +14,8 @@ class GamePage extends StatefulWidget {
   final List<Game> availableGames;
   final VoidCallback onQuit;
 
-  const GamePage({super.key,
+  const GamePage({
+    super.key,
     required this.players,
     required this.rounds,
     required this.availableGames,
@@ -51,15 +54,19 @@ class _GamePageState extends State<GamePage> {
     }
 
     final randomIndex = Random().nextInt(widget.availableGames.length);
-    setState(() {
-      _currentGame = widget.availableGames[randomIndex];
-    });
+    _currentGame = widget.availableGames[randomIndex];
+
+    setState(() {});
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_currentGame!.name == "Pictionary" || _currentGame!.name == "Charades") {
         _navigateToPlayerSelection();
       } else if (_currentGame!.name == "Tic Tac Toe") {
         _navigateToTicTacToe();
+      } else if (_currentGame!.name == "Mastermind") {
+        _navigateToMastermind();
+      } else if (_currentGame!.name == "Color Hunt") {
+        _navigateToColorHunt();
       }
     });
   }
@@ -69,6 +76,21 @@ class _GamePageState extends State<GamePage> {
       context,
       MaterialPageRoute(
         builder: (context) => TicTacToePage(
+          onQuit: () {
+            Navigator.pop(context);
+            _nextRound();
+          },
+        ),
+      ),
+    );
+  }
+
+  void _navigateToMastermind() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MastermindPage(
+          players: widget.players,
           onQuit: () {
             Navigator.pop(context);
             _nextRound();
@@ -91,8 +113,23 @@ class _GamePageState extends State<GamePage> {
               ? SuggestionPage.pictionarySuggestions
               : SuggestionPage.charadesSuggestions,
           onDone: () {
-            Navigator.pop(context); // Return to the game page
-            setState(() {}); // Refresh the UI to show the current game
+            Navigator.pop(context);
+            setState(() {});
+          },
+        ),
+      ),
+    );
+  }
+
+  void _navigateToColorHunt() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ColorHuntPage(
+          players: widget.players,
+          onQuit: () {
+            Navigator.pop(context);
+            _nextRound();
           },
         ),
       ),
@@ -260,7 +297,7 @@ class _GamePageState extends State<GamePage> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.lightBlueAccent, Colors.grey],
+            colors: [Colors.black, Colors.grey],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -320,13 +357,13 @@ class _GamePageState extends State<GamePage> {
                   itemCount: widget.players.length,
                   itemBuilder: (context, index) {
                     return Card(
-                      color: Colors.white,
+                      color: Colors.grey[800],
                       margin: const EdgeInsets.symmetric(vertical: 5),
                       elevation: 2,
                       child: ListTile(
                         title: Text(
                           widget.players[index],
-                          style: const TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
