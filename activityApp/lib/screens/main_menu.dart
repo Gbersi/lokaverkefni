@@ -8,10 +8,10 @@ class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
 
   @override
-  _MainMenuState createState() => _MainMenuState();
+  MainMenuState createState() => MainMenuState();
 }
 
-class _MainMenuState extends State<MainMenu> {
+class MainMenuState extends State<MainMenu> {
   final List<Game> games = getGames();
   late List<Game> _selectedGames;
   final List<String> _players = [];
@@ -92,7 +92,7 @@ class _MainMenuState extends State<MainMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main Menu',style: TextStyle(color: Colors.white),),
+        title: const Text('Main Menu'),
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -136,8 +136,12 @@ class _MainMenuState extends State<MainMenu> {
                   itemCount: _players.length,
                   itemBuilder: (context, index) {
                     final playerName = _players[index];
-                    return Card(
-                      color: Colors.grey[900],
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: ListTile(
                         title: Text(
                           playerName,
@@ -154,6 +158,7 @@ class _MainMenuState extends State<MainMenu> {
               ),
               const SizedBox(height: 8),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
                     "Rounds: ",
@@ -179,17 +184,40 @@ class _MainMenuState extends State<MainMenu> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.black,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
               ElevatedButton.icon(
                 onPressed: _navigateToGameSelectionPage,
-                icon: const Icon(Icons.gamepad),
-                label: const Text("Select Games"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[800],
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                ),
+                icon: const Icon(Icons.gamepad, color: Colors.white),
+                label: const Text(
+                  'Select Games',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-              const SizedBox(height: 8),
               ElevatedButton.icon(
                 onPressed: _startGame,
-                icon: const Icon(Icons.play_arrow),
-                label: const Text("Start Game"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[800],
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                ),
+                icon: const Icon(Icons.play_arrow, color: Colors.white),
+                label: const Text(
+                  'Start Game',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),

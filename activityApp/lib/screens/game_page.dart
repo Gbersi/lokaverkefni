@@ -8,6 +8,7 @@ import 'player_selection_page.dart';
 import 'package:activityapp/models/suggestion_page.dart';
 import 'package:activityapp/Game Functions/colorhunt_page.dart';
 
+
 class GamePage extends StatefulWidget {
   final List<String> players;
   final int rounds;
@@ -31,7 +32,7 @@ class _GamePageState extends State<GamePage> {
   int _currentRound = 1;
   Game? _currentGame;
   Timer? _timer;
-  int _remainingTime = 30;
+  int _remainingTime = 60;
   bool _isTimerRunning = false;
 
   @override
@@ -55,9 +56,9 @@ class _GamePageState extends State<GamePage> {
 
     final randomIndex = Random().nextInt(widget.availableGames.length);
     _currentGame = widget.availableGames[randomIndex];
-
     setState(() {});
 
+    // Navigate based on the selected game
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_currentGame!.name == "Pictionary" || _currentGame!.name == "Charades") {
         _navigateToPlayerSelection();
@@ -114,7 +115,7 @@ class _GamePageState extends State<GamePage> {
               : SuggestionPage.charadesSuggestions,
           onDone: () {
             Navigator.pop(context);
-            setState(() {});
+            _startTimer();
           },
         ),
       ),
@@ -136,57 +137,6 @@ class _GamePageState extends State<GamePage> {
     );
   }
 
-  void _nextRound() {
-    _timer?.cancel();
-    setState(() {
-      _isTimerRunning = false;
-      _remainingTime = 30;
-      if (_currentRound < widget.rounds) {
-        _currentRound++;
-        _selectRandomGame();
-      } else {
-        _showGameOverDialog();
-      }
-    });
-  }
-
-  void _showNoGamesSelectedDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('No Games Selected'),
-        content: const Text('Please select at least one game from the main menu.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showGameOverDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('Game Over!'),
-        content: const Text('The game has ended.'),
-        actions: [
-          ElevatedButton(
-            onPressed: _restartGame,
-            child: const Text('Restart Game'),
-          ),
-          ElevatedButton(
-            onPressed: widget.onQuit,
-            child: const Text('Main Menu'),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _startTimer() {
     _timer?.cancel();
     setState(() {
@@ -201,6 +151,13 @@ class _GamePageState extends State<GamePage> {
           _remainingTime--;
         });
       }
+    });
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    setState(() {
+      _isTimerRunning = false;
     });
   }
 
@@ -256,15 +213,51 @@ class _GamePageState extends State<GamePage> {
     });
   }
 
-  void _restartGame() {
-    Navigator.of(context).pop();
+  void _nextRound() {
+    _timer?.cancel();
     setState(() {
-      _scores = List.filled(widget.players.length, 0);
-      _currentRound = 1;
-      _selectRandomGame();
-      _remainingTime = 30;
       _isTimerRunning = false;
+      _remainingTime = 60;
+      if (_currentRound < widget.rounds) {
+        _currentRound++;
+        _selectRandomGame();
+      } else {
+        _showGameOverDialog();
+      }
     });
+  }
+
+  void _showNoGamesSelectedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('No Games Selected'),
+        content: const Text('Please select at least one game from the main menu.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showGameOverDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Game Over!'),
+        content: const Text('The game has ended.'),
+        actions: [
+          ElevatedButton(
+            onPressed: widget.onQuit,
+            child: const Text('Main Menu'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -341,16 +334,20 @@ class _GamePageState extends State<GamePage> {
                 style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
               const SizedBox(height: 10),
-              ElevatedButton.icon(
-                onPressed: _isTimerRunning ? null : _startTimer,
-                icon: const Icon(Icons.timer),
-                label: const Text('Start Timer'),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton.icon(
-                onPressed: _nextRound,
-                icon: const Icon(Icons.skip_next),
-                label: const Text('Next Round'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: _isTimerRunning ? _stopTimer : _startTimer,
+                    icon: Icon(_isTimerRunning ? Icons.pause : Icons.timer),
+                    label: Text(_isTimerRunning ? 'Stop Timer' : 'Start Timer'),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: _nextRound,
+                    icon: const Icon(Icons.skip_next),
+                    label: const Text('Next Round'),
+                  ),
+                ],
               ),
               Expanded(
                 child: ListView.builder(

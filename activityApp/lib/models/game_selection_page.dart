@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'games.dart';
 
+
 class GameSelectionPage extends StatefulWidget {
   final List<Game> availableGames;
   final List<Game> initiallySelectedGames;
@@ -57,7 +58,12 @@ class _GameSelectionPageState extends State<GameSelectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select Games"),
+        title: const Text(
+          "Select Games",
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.grey[200],
+        iconTheme: const IconThemeData(color: Colors.black),
         actions: [
           IconButton(
             icon: const Icon(Icons.select_all),
@@ -71,97 +77,124 @@ class _GameSelectionPageState extends State<GameSelectionPage> {
           ),
         ],
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16.0),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 3 / 2,
+      body: Container(
+        decoration:  BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.grey[300]!, Colors.black],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-        itemCount: widget.availableGames.length,
-        itemBuilder: (context, index) {
-          final game = widget.availableGames[index];
-          final isSelected = _selectedGames.contains(game);
+        child: GridView.builder(
+          padding: const EdgeInsets.all(12.0),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3, // Smaller cards with more per row
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 3 / 4, // Adjusted for smaller size
+          ),
+          itemCount: widget.availableGames.length,
+          itemBuilder: (context, index) {
+            final game = widget.availableGames[index];
+            final isSelected = _selectedGames.contains(game);
 
-          return GestureDetector(
-            onTap: () => _toggleSelection(game),
-            child: MouseRegion(
-              onEnter: (_) => setState(() {}),
-              onExit: (_) => setState(() {}),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: isSelected ? Colors.green : Colors.grey[800],
-                  boxShadow: isSelected
-                      ? [
-                    BoxShadow(
-                      color: Colors.greenAccent.withOpacity(0.6),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                    ),
-                  ]
-                      : [],
-                ),
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        game.imageUrl,
-                        height: double.infinity,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        color: isSelected ? Colors.black.withOpacity(0.4) : null,
-                        colorBlendMode: isSelected ? BlendMode.darken : null,
+            return GestureDetector(
+              onTap: () {
+                _toggleSelection(game);
+              },
+              child: Transform.scale(
+                scale: isSelected ? 0.95 : 1.0, // Shrink effect on selection
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: isSelected
+                            ? Colors.greenAccent.withOpacity(0.7)
+                            : Colors.black.withOpacity(0.2),
+                        blurRadius: isSelected ? 12 : 6,
+                        offset: isSelected ? const Offset(0, 4) : const Offset(0, 2),
                       ),
+                    ],
+                    border: Border.all(
+                      color: isSelected ? Colors.greenAccent : Colors.grey[700]!,
+                      width: 2,
                     ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        color: Colors.black.withOpacity(0.6),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              game.name,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
+                    gradient: LinearGradient(
+                      colors: isSelected
+                          ? [Colors.greenAccent.withOpacity(0.3), Colors.greenAccent.withOpacity(0.2)]
+                          : [Colors.grey[800]!, Colors.grey[900]!],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(12),
+                          ),
+                          child: Image.network(
+                            game.imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.greenAccent : Colors.grey[850],
+                            borderRadius: const BorderRadius.vertical(
+                              bottom: Radius.circular(12),
                             ),
-                            const SizedBox(height: 8),
-                            AnimatedOpacity(
-                              duration: const Duration(milliseconds: 300),
-                              opacity: 0.8,
-                              child: Text(
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                game.name,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
                                 game.explanation,
                                 style: const TextStyle(
                                   color: Colors.white70,
-                                  fontSize: 12,
+                                  fontSize: 10,
                                 ),
-                                textAlign: TextAlign.center,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _saveSelection,
+        backgroundColor: Colors.greenAccent,
         tooltip: "Save Selection",
         child: const Icon(Icons.save),
       ),

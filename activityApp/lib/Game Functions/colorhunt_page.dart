@@ -74,10 +74,10 @@ class _ColorHuntPageState extends State<ColorHuntPage> {
         actions: [
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-              widget.onQuit(); // Return to the main menu
+              Navigator.of(context).pop();
+              widget.onQuit(); //
             },
-            child: const Text("Main Menu"),
+            child: const Text("Return to playing"),
           ),
         ],
       ),
