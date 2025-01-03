@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'screens/tabs.dart';
-import 'screens/filters.dart';
-import 'screens/your_recipes.dart';
-import 'screens/meal_details.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'models/meal.dart';
+import 'screens/tabs.dart';
+import 'screens/meal_details.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+  Hive.registerAdapter(MealAdapter());
+
+
+  await Hive.openBox<Meal>('userRecipes');
+  await Hive.openBox<Meal>('favorites');
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -16,28 +24,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Uppskriftar App',
+      title: 'Recipe App',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(color: Colors.black),
-        ),
       ),
-      initialRoute: '/',
+      home: const TabsScreen(),
       routes: {
-        '/': (ctx) => const TabsScreen(), // Home screen
-        '/filters': (ctx) => const FiltersScreen(), // Filters screen
-        '/your-recipes': (ctx) => const YourRecipesScreen(), // Your Recipes screen
-      },
-      onGenerateRoute: (settings) {
-        if (settings.name == '/meal-details') {
-          final meal = settings.arguments as Meal;
-          return MaterialPageRoute(
-            builder: (ctx) => MealDetailsScreen(meal: meal),
-          );
-        }
-        return null;
+        '/meal-details': (ctx) => const MealDetailsScreen(),
       },
     );
   }

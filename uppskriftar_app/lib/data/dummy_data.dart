@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:uppskriftar_app/models/category.dart';
-import 'package:uppskriftar_app/models/meal.dart';
+import '../models/category.dart';
+import '../models/meal.dart';
+import 'package:uppskriftar_app/models/meal_enums.dart';
 
 
-// Constants in Dart should be written in lowerCamelcase.
-const availableCategories = [
+const dummyCategories = [
   Category(
     id: 'c1',
     title: 'Italian',
@@ -55,6 +55,11 @@ const availableCategories = [
     title: 'Summer',
     color: Colors.teal,
   ),
+  Category(
+    id: 'your-recipes',
+    title: 'Your Recipes',
+    color: Colors.teal,
+  ),
 ];
 
 var dummyMeals = [
@@ -65,7 +70,7 @@ var dummyMeals = [
       'c2',
     ],
     title: 'Spaghetti with Tomato Sauce',
-    affordability: Affordability.affordable,
+    affordability: Affordability.pricey,
     complexity: Complexity.simple,
     imageUrl:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg',
@@ -267,6 +272,7 @@ var dummyMeals = [
     title: 'Pancakes',
     affordability: Affordability.affordable,
     complexity: Complexity.simple,
+
     imageUrl:
     'https://cdn.pixabay.com/photo/2018/07/10/21/23/pancake-3529653_1280.jpg',
     duration: 20,

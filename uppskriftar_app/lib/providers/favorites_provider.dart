@@ -1,24 +1,31 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
+import '../models/meal.dart';
 
-import 'package:uppskriftar_app/models/meal.dart';
+final favoritesProvider = StateNotifierProvider<FavoritesNotifier, List<Meal>>(
+      (ref) => FavoritesNotifier(),
+);
 
-class FavoriteMealsNotifier extends StateNotifier<List<Meal>> {
-  FavoriteMealsNotifier() : super([]);
+class FavoritesNotifier extends StateNotifier<List<Meal>> {
+  FavoritesNotifier() : super(_loadInitialFavorites());
 
-  bool toggleMealFavoriteStatus(Meal meal) {
-    final mealIsFavorite = state.contains(meal);
+  static List<Meal> _loadInitialFavorites() {
+    final favoritesBox = Hive.box<Meal>('favorites');
+    return favoritesBox.values.toList();
+  }
 
-    if (mealIsFavorite) {
-      state = state.where((m) => m.id != meal.id).toList();
-      return false;
+  void toggleFavorite(Meal meal) async {
+    final favoritesBox = Hive.box<Meal>('favorites');
+    if (isFavorite(meal)) {
+      await favoritesBox.delete(meal.id); // Remove from favorites
+      state = state.where((favorite) => favorite.id != meal.id).toList();
     } else {
+      await favoritesBox.put(meal.id, meal); // Add to favorites
       state = [...state, meal];
-      return true;
     }
   }
-}
 
-final favoriteMealsProvider =
-StateNotifierProvider<FavoriteMealsNotifier, List<Meal>>((ref) {
-  return FavoriteMealsNotifier();
-});
+  bool isFavorite(Meal meal) {
+    return state.any((favorite) => favorite.id == meal.id);
+  }
+}

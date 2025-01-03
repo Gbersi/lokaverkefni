@@ -1,45 +1,34 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/meal.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../data/dummy_data.dart';
+import '../models/meal.dart';
+
+
+final mealsProvider = StateNotifierProvider<MealsNotifier, List<Meal>>(
+      (ref) => MealsNotifier(),
+);
 
 class MealsNotifier extends StateNotifier<List<Meal>> {
-  MealsNotifier() : super([...dummyMeals]) {
-    _loadUserRecipes();
+  MealsNotifier() : super(_loadInitialMeals());
+
+
+  static List<Meal> _loadInitialMeals() {
+    final userRecipesBox = Hive.box<Meal>('userRecipes');
+    final userRecipes = userRecipesBox.values.toList();
+    return dummyMeals + userRecipes;
   }
+
 
   void addMeal(Meal newMeal) async {
-    final userMeal = newMeal.copyWith(categories: ['your-recipes']);
-    state = [...state, userMeal];
-    await _saveUserRecipes();
+    final userRecipesBox = Hive.box<Meal>('userRecipes');
+    await userRecipesBox.put(newMeal.id, newMeal);
+    state = [...state, newMeal];
   }
+
 
   void deleteMeal(String mealId) async {
-    state = state.where((meal) {
-      return !meal.categories.contains('your-recipes') || meal.id != mealId;
-    }).toList();
-    await _saveUserRecipes();
-  }
-
-  Future<void> _saveUserRecipes() async {
-    final userRecipes = state.where((meal) => meal.categories.contains('your-recipes')).toList();
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('userRecipes', jsonEncode(userRecipes.map((meal) => meal.toJson()).toList()));
-  }
-
-  Future<void> _loadUserRecipes() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userRecipesData = prefs.getString('userRecipes');
-    if (userRecipesData != null) {
-      final List<dynamic> decodedData = jsonDecode(userRecipesData);
-      final userRecipes = decodedData.map((data) => Meal.fromJson(data)).toList();
-      state = [...dummyMeals, ...userRecipes];
-    }
+    final userRecipesBox = Hive.box<Meal>('userRecipes');
+    await userRecipesBox.delete(mealId);
+    state = state.where((meal) => meal.id != mealId).toList();
   }
 }
-
-final mealsProvider = StateNotifierProvider<MealsNotifier, List<Meal>>((ref) {
-  return MealsNotifier();
-});

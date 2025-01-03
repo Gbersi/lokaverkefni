@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import '../widgets/main_drawer.dart';
 import '../models/meal.dart';
+import '../widgets/meal_item.dart';
 
-class YourRecipesScreen extends StatelessWidget {
-  final List<Meal> userRecipes;
+class FavoritesScreen extends StatelessWidget {
+  final List<Meal> favoriteMeals;
   final List<Meal> availableMeals;
 
-  const YourRecipesScreen({
+  const FavoritesScreen({
     super.key,
-    required this.userRecipes,
+    required this.favoriteMeals,
     required this.availableMeals,
   });
 
@@ -16,23 +17,23 @@ class YourRecipesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Recipes'),
+        title: const Text('Your Favorites'),
       ),
       drawer: MainDrawer(availableMeals: availableMeals),
-      body: userRecipes.isEmpty
+      body: favoriteMeals.isEmpty
           ? const Center(
-        child: Text('No recipes added yet!'),
+        child: Text('No favorites yet! Add some!'),
       )
           : ListView.builder(
-        itemCount: userRecipes.length,
+        itemCount: favoriteMeals.length,
         itemBuilder: (ctx, index) {
-          final recipe = userRecipes[index];
-          return ListTile(
-            title: Text(recipe.title),
-            onTap: () {
+          final meal = favoriteMeals[index];
+          return MealItem(
+            meal: meal,
+            onSelectMeal: () {
               Navigator.of(context).pushNamed(
                 '/meal-details',
-                arguments: recipe,
+                arguments: meal,
               );
             },
           );

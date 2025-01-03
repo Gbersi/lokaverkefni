@@ -3,34 +3,45 @@ import '../models/meal.dart';
 
 class MealItem extends StatelessWidget {
   final Meal meal;
+  final VoidCallback onSelectMeal;
   final VoidCallback? onDelete;
-  final VoidCallback? onSelectMeal;
 
   const MealItem({
     super.key,
     required this.meal,
+    required this.onSelectMeal,
     this.onDelete,
-    this.onSelectMeal,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: InkWell(
-        onTap: onSelectMeal ?? () {
-          Navigator.of(context).pushNamed(
-            '/meal-details',
-            arguments: meal,
-          );
-        },
+    return InkWell(
+      onTap: onSelectMeal,
+      splashColor: Colors.teal,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        margin: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+          color: Colors.white,
+        ),
         child: Column(
           children: [
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                  ),
                   child: Image.network(
                     meal.imageUrl,
                     height: 250,
@@ -38,25 +49,19 @@ class MealItem extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                Positioned(
-                  bottom: 20,
-                  right: 10,
-                  child: Container(
-                    width: 300,
-                    color: Colors.black54,
-                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                    child: Text(
-                      meal.title,
-                      style: const TextStyle(fontSize: 26, color: Colors.white),
-                      softWrap: true,
-                      overflow: TextOverflow.fade,
+                if (onDelete != null)
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: onDelete,
                     ),
                   ),
-                ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -81,11 +86,6 @@ class MealItem extends StatelessWidget {
                       Text(meal.affordability.name),
                     ],
                   ),
-                  if (onDelete != null)
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: onDelete,
-                    ),
                 ],
               ),
             ),

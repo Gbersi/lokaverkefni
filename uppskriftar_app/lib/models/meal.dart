@@ -1,98 +1,61 @@
-enum Complexity {
-  simple,
-  challenging,
-  hard,
-}
+import 'package:hive/hive.dart';
+import 'meal_enums.dart';
+part 'meal.g.dart';
 
-enum Affordability {
-  affordable,
-  pricey,
-  luxurious,
-}
-
-
+@HiveType(typeId: 1)
 class Meal {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   final List<String> categories;
+
+  @HiveField(2)
   final String title;
-  final Affordability affordability;
-  final Complexity complexity;
+
+  @HiveField(3)
   final String imageUrl;
-  final int duration;
+
+  @HiveField(4)
   final List<String> ingredients;
+
+  @HiveField(5)
   final List<String> steps;
+
+  @HiveField(6)
+  final int duration;
+
+  @HiveField(7)
+  final Affordability affordability;
+
+  @HiveField(8)
+  final Complexity complexity;
+
+  @HiveField(9)
   final bool isGlutenFree;
+
+  @HiveField(10)
   final bool isLactoseFree;
-  final bool isVegan;
+
+  @HiveField(11)
   final bool isVegetarian;
 
-  Meal({
+  @HiveField(12)
+  final bool isVegan;
+
+  const Meal({
     required this.id,
     required this.categories,
     required this.title,
-    required this.affordability,
-    required this.complexity,
     required this.imageUrl,
-    required this.duration,
     required this.ingredients,
     required this.steps,
+    required this.duration,
+    required this.affordability,
+    required this.complexity,
     required this.isGlutenFree,
     required this.isLactoseFree,
-    required this.isVegan,
     required this.isVegetarian,
+    required this.isVegan,
   });
-
-  Meal copyWith({List<String>? categories}) {
-    return Meal(
-      id: id,
-      categories: categories ?? this.categories,
-      title: title,
-      affordability: affordability,
-      complexity: complexity,
-      imageUrl: imageUrl,
-      duration: duration,
-      ingredients: ingredients,
-      steps: steps,
-      isGlutenFree: isGlutenFree,
-      isLactoseFree: isLactoseFree,
-      isVegan: isVegan,
-      isVegetarian: isVegetarian,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'categories': categories,
-      'title': title,
-      'affordability': affordability.index,
-      'complexity': complexity.index,
-      'imageUrl': imageUrl,
-      'duration': duration,
-      'ingredients': ingredients,
-      'steps': steps,
-      'isGlutenFree': isGlutenFree,
-      'isLactoseFree': isLactoseFree,
-      'isVegan': isVegan,
-      'isVegetarian': isVegetarian,
-    };
-  }
-
-  static Meal fromJson(Map<String, dynamic> json) {
-    return Meal(
-      id: json['id'],
-      categories: List<String>.from(json['categories']),
-      title: json['title'],
-      affordability: Affordability.values[json['affordability']],
-      complexity: Complexity.values[json['complexity']],
-      imageUrl: json['imageUrl'],
-      duration: json['duration'],
-      ingredients: List<String>.from(json['ingredients']),
-      steps: List<String>.from(json['steps']),
-      isGlutenFree: json['isGlutenFree'],
-      isLactoseFree: json['isLactoseFree'],
-      isVegan: json['isVegan'],
-      isVegetarian: json['isVegetarian'],
-    );
-  }
 }
