@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import '../screens/categories.dart';
-import '../screens/favorites.dart';
-import '../screens/your_recipes.dart';
-import '../screens/timer_screen.dart';
-import '../models/meal.dart';
 
 class MainDrawer extends StatelessWidget {
-  final List<Meal> availableMeals;
+  final Function(int) setSelectedIndex;
 
-  const MainDrawer({super.key, required this.availableMeals});
+  const MainDrawer({super.key, required this.setSelectedIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +19,8 @@ class MainDrawer extends StatelessWidget {
             leading: const Icon(Icons.category),
             title: const Text('Categories'),
             onTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (ctx) => CategoriesScreen(availableMeals: availableMeals),
-                ),
-              );
+              Navigator.of(context).pop(); // Close the drawer
+              setSelectedIndex(0);
             },
           ),
           const Divider(),
@@ -36,11 +28,8 @@ class MainDrawer extends StatelessWidget {
             leading: const Icon(Icons.star),
             title: const Text('Your Favorites'),
             onTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (ctx) => const FavoritesScreen(favoriteMeals: [], availableMeals: [],),
-                ),
-              );
+              Navigator.of(context).pop();
+              setSelectedIndex(1);
             },
           ),
           const Divider(),
@@ -48,11 +37,8 @@ class MainDrawer extends StatelessWidget {
             leading: const Icon(Icons.book),
             title: const Text('Your Recipes'),
             onTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (ctx) => const YourRecipesScreen(userRecipes: [], availableMeals: [],),
-                ),
-              );
+              Navigator.of(context).pop();
+              setSelectedIndex(2);
             },
           ),
           const Divider(),
@@ -60,11 +46,8 @@ class MainDrawer extends StatelessWidget {
             leading: const Icon(Icons.timer),
             title: const Text('Timer'),
             onTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (ctx) => const TimerScreen(availableMeals: [],),
-                ),
-              );
+              Navigator.of(context).pop();
+              setSelectedIndex(3);
             },
           ),
         ],
@@ -72,4 +55,3 @@ class MainDrawer extends StatelessWidget {
     );
   }
 }
-

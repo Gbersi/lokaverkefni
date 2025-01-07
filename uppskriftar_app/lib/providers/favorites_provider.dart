@@ -17,10 +17,10 @@ class FavoritesNotifier extends StateNotifier<List<Meal>> {
   void toggleFavorite(Meal meal) async {
     final favoritesBox = Hive.box<Meal>('favorites');
     if (isFavorite(meal)) {
-      await favoritesBox.delete(meal.id); // Remove from favorites
+      await favoritesBox.delete(meal.id);
       state = state.where((favorite) => favorite.id != meal.id).toList();
     } else {
-      await favoritesBox.put(meal.id, meal); // Add to favorites
+      await favoritesBox.put(meal.id, meal);
       state = [...state, meal];
     }
   }

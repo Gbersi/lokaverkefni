@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'meal_enums.dart';
+
 part 'meal.g.dart';
 
 @HiveType(typeId: 1)
@@ -58,4 +59,42 @@ class Meal {
     required this.isVegetarian,
     required this.isVegan,
   });
+
+  // Convert Meal to JSON
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'categories': categories,
+    'title': title,
+    'imageUrl': imageUrl,
+    'ingredients': ingredients,
+    'steps': steps,
+    'duration': duration,
+    'affordability': affordability.name,
+    'complexity': complexity.name,
+    'isGlutenFree': isGlutenFree,
+    'isLactoseFree': isLactoseFree,
+    'isVegetarian': isVegetarian,
+    'isVegan': isVegan,
+  };
+
+  // Create Meal from JSON
+  factory Meal.fromJson(Map<String, dynamic> json) {
+    return Meal(
+      id: json['id'],
+      categories: List<String>.from(json['categories']),
+      title: json['title'],
+      imageUrl: json['imageUrl'],
+      ingredients: List<String>.from(json['ingredients']),
+      steps: List<String>.from(json['steps']),
+      duration: json['duration'],
+      affordability: Affordability.values
+          .firstWhere((e) => e.name == json['affordability']),
+      complexity: Complexity.values
+          .firstWhere((e) => e.name == json['complexity']),
+      isGlutenFree: json['isGlutenFree'],
+      isLactoseFree: json['isLactoseFree'],
+      isVegetarian: json['isVegetarian'],
+      isVegan: json['isVegan'],
+    );
+  }
 }

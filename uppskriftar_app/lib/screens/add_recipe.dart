@@ -1,53 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import '../providers/meals_provider.dart';
 import '../models/meal.dart';
-import '../models/meal_enums.dart'; // Import enums
+import '../models/meal_enums.dart';
 
-class AddRecipeScreen extends ConsumerWidget {
+class AddRecipeScreen extends StatefulWidget {
   const AddRecipeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final mealsNotifier = ref.read(mealsProvider.notifier);
-    final titleController = TextEditingController();
-    final ingredientsController = TextEditingController();
-    final stepsController = TextEditingController();
+  _AddRecipeScreenState createState() => _AddRecipeScreenState();
+}
 
-    Affordability selectedAffordability = Affordability.affordable;
-    Complexity selectedComplexity = Complexity.simple;
+class _AddRecipeScreenState extends State<AddRecipeScreen> {
+  final _titleController = TextEditingController();
+  final _ingredientsController = TextEditingController();
+  final _stepsController = TextEditingController();
 
-    void _saveRecipe() {
-      if (titleController.text.isEmpty ||
-          ingredientsController.text.isEmpty ||
-          stepsController.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please fill in all fields')),
-        );
-        return;
-      }
+  Affordability _selectedAffordability = Affordability.affordable;
+  Complexity _selectedComplexity = Complexity.simple;
 
-      final newMeal = Meal(
-        id: const Uuid().v4(),
-        categories: ['your-recipes'], // Assign to "Your Recipes" category
-        title: titleController.text,
-        imageUrl: 'https://via.placeholder.com/150', // Placeholder image
-        ingredients: ingredientsController.text.split(','),
-        steps: stepsController.text.split('.'),
-        duration: 30,
-        affordability: selectedAffordability,
-        complexity: selectedComplexity,
-        isGlutenFree: false,
-        isLactoseFree: false,
-        isVegetarian: false,
-        isVegan: false,
+  void _saveRecipe() {
+    if (_titleController.text.isEmpty ||
+        _ingredientsController.text.isEmpty ||
+        _stepsController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
       );
-
-      mealsNotifier.addMeal(newMeal);
-      Navigator.of(context).pop();
+      return;
     }
 
+    final newRecipe = Meal(
+      id: const Uuid().v4(),
+      categories: ['your-recipes'],
+      title: _titleController.text,
+      imageUrl: '',
+      ingredients: _ingredientsController.text.split(',').map((e) => e.trim()).toList(),
+      steps: _stepsController.text.split('.').map((e) => e.trim()).toList(),
+      duration: 30,
+      affordability: _selectedAffordability,
+      complexity: _selectedComplexity,
+      isGlutenFree: false,
+      isLactoseFree: false,
+      isVegetarian: false,
+      isVegan: false,
+    );
+
+    Navigator.of(context).pop(newRecipe);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Recipe'),
@@ -57,20 +58,20 @@ class AddRecipeScreen extends ConsumerWidget {
         child: Column(
           children: [
             TextField(
-              controller: titleController,
+              controller: _titleController,
               decoration: const InputDecoration(labelText: 'Title'),
             ),
             TextField(
-              controller: ingredientsController,
+              controller: _ingredientsController,
               decoration: const InputDecoration(labelText: 'Ingredients (comma-separated)'),
             ),
             TextField(
-              controller: stepsController,
+              controller: _stepsController,
               decoration: const InputDecoration(labelText: 'Steps (period-separated)'),
             ),
             const SizedBox(height: 20),
             DropdownButtonFormField<Affordability>(
-              value: selectedAffordability,
+              value: _selectedAffordability,
               decoration: const InputDecoration(labelText: 'Affordability'),
               items: Affordability.values.map((affordability) {
                 return DropdownMenuItem(
@@ -78,13 +79,13 @@ class AddRecipeScreen extends ConsumerWidget {
                   child: Text(affordability.name),
                 );
               }).toList(),
-              onChanged: (value) {
-                selectedAffordability = value!;
-              },
+              onChanged: (value) => setState(() {
+                _selectedAffordability = value!;
+              }),
             ),
             const SizedBox(height: 20),
             DropdownButtonFormField<Complexity>(
-              value: selectedComplexity,
+              value: _selectedComplexity,
               decoration: const InputDecoration(labelText: 'Complexity'),
               items: Complexity.values.map((complexity) {
                 return DropdownMenuItem(
@@ -92,9 +93,9 @@ class AddRecipeScreen extends ConsumerWidget {
                   child: Text(complexity.name),
                 );
               }).toList(),
-              onChanged: (value) {
-                selectedComplexity = value!;
-              },
+              onChanged: (value) => setState(() {
+                _selectedComplexity = value!;
+              }),
             ),
             const SizedBox(height: 20),
             ElevatedButton(

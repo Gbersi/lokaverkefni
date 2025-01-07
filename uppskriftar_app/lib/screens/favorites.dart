@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
-import '../widgets/main_drawer.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/meal.dart';
 import '../widgets/meal_item.dart';
+import '../providers/favorites_provider.dart';
 
-class FavoritesScreen extends StatelessWidget {
-  final List<Meal> favoriteMeals;
-  final List<Meal> availableMeals;
-
-  const FavoritesScreen({
-    super.key,
-    required this.favoriteMeals,
-    required this.availableMeals,
-  });
+class FavoritesScreen extends ConsumerWidget {
+  const FavoritesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteMeals = ref.watch(favoritesProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Favorites'),
       ),
-      drawer: MainDrawer(availableMeals: availableMeals),
       body: favoriteMeals.isEmpty
           ? const Center(
         child: Text('No favorites yet! Add some!'),

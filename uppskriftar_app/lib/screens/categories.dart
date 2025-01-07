@@ -1,31 +1,19 @@
 import 'package:flutter/material.dart';
-import '../models/meal.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/filters_provider.dart';
 import '../widgets/category_grid_item.dart';
-import '../widgets/main_drawer.dart';
+import '../widgets/meal_item.dart';
 import 'meals.dart';
 
-class CategoriesScreen extends StatelessWidget {
-  final List<Meal> availableMeals;
-
-  const CategoriesScreen({super.key, required this.availableMeals});
-
-  void _selectCategory(BuildContext context, String categoryId, String categoryTitle) {
-    final filteredMeals = availableMeals.where((meal) {
-      return meal.categories.contains(categoryId);
-    }).toList();
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (ctx) => MealsScreen(
-          title: categoryTitle,
-          meals: filteredMeals,
-        ),
-      ),
-    );
-  }
+class CategoriesScreen extends ConsumerWidget {
+  const CategoriesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final filteredMeals = ref.watch(filteredMealsProvider);
+    final searchQuery = ref.watch(filterSearchProvider).searchQuery;
+    final filterSearchNotifier = ref.read(filterSearchProvider.notifier);
+
     final dummyCategories = [
       {'id': 'c1', 'title': 'Italian', 'color': Colors.purple},
       {'id': 'c2', 'title': 'Quick & Easy', 'color': Colors.red},
@@ -37,34 +25,76 @@ class CategoriesScreen extends StatelessWidget {
       {'id': 'c8', 'title': 'Asian', 'color': Colors.lightGreen},
       {'id': 'c9', 'title': 'French', 'color': Colors.pink},
       {'id': 'c10', 'title': 'Summer', 'color': Colors.teal},
+      {'id': 'your-recipes', 'title': 'Your Recipes', 'color': Colors.brown},
     ];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Categories'),
-      ),
-      drawer: MainDrawer(availableMeals: availableMeals),
-      body: GridView(
-        padding: const EdgeInsets.all(15),
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 200,
-          childAspectRatio: 3 / 2,
-          crossAxisSpacing: 20,
-          mainAxisSpacing: 20,
-        ),
-        children: dummyCategories.map((catData) {
-          return CategoryGridItem(
-            id: catData['id'] as String,
-            title: catData['title'] as String,
-            color: catData['color'] as Color,
-            onSelectCategory: () => _selectCategory(
-              context,
-              catData['id'] as String,
-              catData['title'] as String,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            decoration: InputDecoration(
+              labelText: 'Search Recipes',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
-          );
-        }).toList(),
-      ),
+            onChanged: (query) {
+              filterSearchNotifier.setSearchQuery(query);
+            },
+          ),
+        ),
+        Expanded(
+          child: searchQuery.isNotEmpty
+              ? ListView.builder(
+            itemCount: filteredMeals.length,
+            itemBuilder: (ctx, index) {
+              final meal = filteredMeals[index];
+              return MealItem(
+                meal: meal,
+                onSelectMeal: () {
+                  Navigator.of(context).pushNamed(
+                    '/meal-details',
+                    arguments: meal,
+                  );
+                },
+              );
+            },
+          )
+              : GridView(
+            padding: const EdgeInsets.all(15),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200,
+              childAspectRatio: 3 / 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
+            ),
+            children: dummyCategories.map((catData) {
+              return CategoryGridItem(
+                id: catData['id'] as String,
+                title: catData['title'] as String,
+                color: catData['color'] as Color,
+                onSelectCategory: () {
+                  final categoryMeals = filteredMeals.where((meal) {
+                    return meal.categories.contains(catData['id']);
+                  }).toList();
+
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => MealsScreen(
+                        title: catData['title'] as String,
+                        meals: categoryMeals,
+                      ),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 }
+

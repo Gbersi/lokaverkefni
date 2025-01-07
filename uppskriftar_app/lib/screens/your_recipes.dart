@@ -1,40 +1,84 @@
 import 'package:flutter/material.dart';
-import '../widgets/main_drawer.dart';
 import '../models/meal.dart';
+import '../utils/recipe_storage.dart';
+import './add_recipe.dart';
 
-class YourRecipesScreen extends StatelessWidget {
-  final List<Meal> userRecipes;
-  final List<Meal> availableMeals;
+class YourRecipesScreen extends StatefulWidget {
+  const YourRecipesScreen({super.key});
 
-  const YourRecipesScreen({
-    super.key,
-    required this.userRecipes,
-    required this.availableMeals,
-  });
+  @override
+  _YourRecipesScreenState createState() => _YourRecipesScreenState();
+}
+
+class _YourRecipesScreenState extends State<YourRecipesScreen> {
+  List<Meal> _userRecipes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeAndLoadRecipes();
+  }
+
+  Future<void> _initializeAndLoadRecipes() async {
+    await RecipeStorage.initialize();
+    final recipes = RecipeStorage.getRecipes();
+    setState(() {
+      _userRecipes = recipes;
+    });
+  }
+
+  void _addRecipe(Meal newRecipe) async {
+    _userRecipes.add(newRecipe);
+    await RecipeStorage.saveRecipes(_userRecipes);
+    setState(() {});
+  }
+
+  void _removeRecipe(String recipeId) async {
+    _userRecipes.removeWhere((meal) => meal.id == recipeId);
+    await RecipeStorage.saveRecipes(_userRecipes);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Recipes'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () async {
+              final newRecipe = await Navigator.of(context).push<Meal>(
+                MaterialPageRoute(
+                  builder: (ctx) => const AddRecipeScreen(),
+                ),
+              );
+              if (newRecipe != null) {
+                _addRecipe(newRecipe);
+              }
+            },
+          ),
+        ],
       ),
-      drawer: MainDrawer(availableMeals: availableMeals),
-      body: userRecipes.isEmpty
+      body: _userRecipes.isEmpty
           ? const Center(
-        child: Text('No recipes added yet!'),
+        child: Text('No recipes added yet! Tap "+" to add one.'),
       )
           : ListView.builder(
-        itemCount: userRecipes.length,
+        itemCount: _userRecipes.length,
         itemBuilder: (ctx, index) {
-          final recipe = userRecipes[index];
+          final recipe = _userRecipes[index];
           return ListTile(
             title: Text(recipe.title),
-            onTap: () {
-              Navigator.of(context).pushNamed(
-                '/meal-details',
-                arguments: recipe,
-              );
-            },
+            subtitle: Text(
+              recipe.ingredients.join(', '),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _removeRecipe(recipe.id),
+            ),
           );
         },
       ),

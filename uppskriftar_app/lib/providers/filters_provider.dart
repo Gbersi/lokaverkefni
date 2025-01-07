@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/meal.dart';
-import 'meals_provider.dart';
-
+import '../providers/meals_provider.dart';
 
 enum Filter {
   glutenFree,
@@ -10,49 +9,76 @@ enum Filter {
   vegan,
 }
 
-class FiltersNotifier extends StateNotifier<Map<Filter, bool>> {
-  FiltersNotifier()
-      : super({
-    Filter.glutenFree: false,
-    Filter.lactoseFree: false,
-    Filter.vegetarian: false,
-    Filter.vegan: false,
-  });
+// Unified filter and search state
+class FilterSearchState {
+  final Map<Filter, bool> filters;
+  final String searchQuery;
 
-  void setFilters(Map<Filter, bool> chosenFilters) {
-    state = chosenFilters;
-  }
+  FilterSearchState({required this.filters, required this.searchQuery});
 
-  void setFilter(Filter filter, bool isActive) {
-    state = {
-      ...state,
-      filter: isActive,
-    };
+  FilterSearchState copyWith({Map<Filter, bool>? filters, String? searchQuery}) {
+    return FilterSearchState(
+      filters: filters ?? this.filters,
+      searchQuery: searchQuery ?? this.searchQuery,
+    );
   }
 }
 
-final filtersProvider =
-StateNotifierProvider<FiltersNotifier, Map<Filter, bool>>(
-      (ref) => FiltersNotifier(),
+class FilterSearchNotifier extends StateNotifier<FilterSearchState> {
+  FilterSearchNotifier()
+      : super(FilterSearchState(
+    filters: {
+      Filter.glutenFree: false,
+      Filter.lactoseFree: false,
+      Filter.vegetarian: false,
+      Filter.vegan: false,
+    },
+    searchQuery: '',
+  ));
+
+  void setFilter(Filter filter, bool isActive) {
+    state = state.copyWith(
+      filters: {
+        ...state.filters,
+        filter: isActive,
+      },
+    );
+  }
+
+  void setSearchQuery(String query) {
+    state = state.copyWith(searchQuery: query.toLowerCase());
+  }
+}
+
+final filterSearchProvider =
+StateNotifierProvider<FilterSearchNotifier, FilterSearchState>(
+      (ref) => FilterSearchNotifier(),
 );
 
+// Dynamically filter meals based on search query and filters
 final filteredMealsProvider = Provider<List<Meal>>((ref) {
-  final meals = ref.watch(mealsProvider); // Fetch all meals
-  final activeFilters = ref.watch(filtersProvider); // Fetch active filters
+  final allMeals = ref.watch(mealsProvider);
+  final filterSearchState = ref.watch(filterSearchProvider);
 
-  return meals.where((meal) {
-    if (activeFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
-      return false;
+  final filters = filterSearchState.filters;
+  final searchQuery = filterSearchState.searchQuery;
+
+  return allMeals.where((meal) {
+    // Apply filters
+    if (filters[Filter.glutenFree]! && !meal.isGlutenFree) return false;
+    if (filters[Filter.lactoseFree]! && !meal.isLactoseFree) return false;
+    if (filters[Filter.vegetarian]! && !meal.isVegetarian) return false;
+    if (filters[Filter.vegan]! && !meal.isVegan) return false;
+
+    // Apply search query
+    if (searchQuery.isNotEmpty) {
+      final matchesTitle = meal.title.toLowerCase().contains(searchQuery);
+      final matchesIngredients = meal.ingredients.any(
+            (ingredient) => ingredient.toLowerCase().contains(searchQuery),
+      );
+      return matchesTitle || matchesIngredients;
     }
-    if (activeFilters[Filter.lactoseFree]! && !meal.isLactoseFree) {
-      return false;
-    }
-    if (activeFilters[Filter.vegetarian]! && !meal.isVegetarian) {
-      return false;
-    }
-    if (activeFilters[Filter.vegan]! && !meal.isVegan) {
-      return false;
-    }
+
     return true;
   }).toList();
 });

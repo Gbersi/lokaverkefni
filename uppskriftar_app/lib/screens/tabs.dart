@@ -4,8 +4,8 @@ import '../screens/categories.dart';
 import '../screens/favorites.dart';
 import '../screens/your_recipes.dart';
 import '../screens/timer_screen.dart';
+import '../screens/filters.dart';
 import '../widgets/main_drawer.dart';
-import '../providers/meals_provider.dart';
 
 class TabsScreen extends ConsumerStatefulWidget {
   const TabsScreen({super.key});
@@ -17,25 +17,49 @@ class TabsScreen extends ConsumerStatefulWidget {
 class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedIndex = 0;
 
+  void _setSelectedIndex(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final availableMeals = ref.watch(mealsProvider);
+    final List<Widget> pages = [
+      const CategoriesScreen(), // No need to pass availableMeals
+      const FavoritesScreen(),
+      const YourRecipesScreen(),
+      const TimerScreen(),
+    ];
 
-    final List<Map<String, dynamic>> pages = [
-      {'page': CategoriesScreen(availableMeals: availableMeals), 'title': 'Categories'},
-      {'page': const FavoritesScreen(favoriteMeals: [], availableMeals: [],), 'title': 'Your Favorites'},
-      {'page': const YourRecipesScreen(userRecipes: [], availableMeals: [],), 'title': 'Your Recipes'},
-      {'page': const TimerScreen(availableMeals: [],), 'title': 'Timer'},
+    final List<String> titles = [
+      'Categories',
+      'Your Favorites',
+      'Your Recipes',
+      'Timer',
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(pages[_selectedIndex]['title']),
+        title: Text(titles[_selectedIndex]),
+        actions: [
+          if (_selectedIndex == 0)
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) => const FiltersScreen(),
+                  ),
+                );
+              },
+            ),
+        ],
       ),
-      drawer: MainDrawer(availableMeals: availableMeals),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: pages[_selectedIndex]['page'],
+      drawer: MainDrawer(setSelectedIndex: _setSelectedIndex),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -45,9 +69,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
         selectedFontSize: 14,
         unselectedFontSize: 12,
         currentIndex: _selectedIndex,
-        onTap: (index) => setState(() {
-          _selectedIndex = index;
-        }),
+        onTap: _setSelectedIndex,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
