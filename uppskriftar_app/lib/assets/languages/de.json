@@ -1,0 +1,20 @@
+{
+  "settings": "Einstellungen",
+  "dark_mode": "Dunkelmodus",
+  "language": "Sprache",
+  "voice_commands": "Sprachbefehle aktivieren",
+  "screen_reader": "Bildschirmleser aktivieren",
+  "categories": "Kategorien",
+  "favorites": "Favoriten",
+  "your_recipes": "Ihre Rezepte",
+  "timer": "Timer",
+  "ingredients": "Zutaten",
+  "steps": "Schritte",
+  "start_timer": "Timer Starten",
+  "time_remaining": "Verbleibende Zeit",
+  "timer_complete": "Timer Abgeschlossen",
+  "recipe_timer_finished": "Ihr Rezept-Timer ist abgelaufen.",
+  "ok": "OK",
+  "menu": "Menü",
+  "share_recipe": "Rezept Teilen"
+}

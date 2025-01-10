@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/meal.dart';
 import '../screens/categories.dart';
 import '../screens/favorites.dart';
 import '../screens/your_recipes.dart';
 import '../screens/timer_screen.dart';
-import '../screens/filters.dart';
+import '../screens/settings.dart';
 import '../widgets/main_drawer.dart';
 
 class TabsScreen extends ConsumerStatefulWidget {
-  const TabsScreen({super.key});
+  final List<Meal> availableMeals;
+
+  const TabsScreen({super.key, required this.availableMeals});
 
   @override
   _TabsScreenState createState() => _TabsScreenState();
@@ -26,50 +29,42 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-      const CategoriesScreen(), // No need to pass availableMeals
+      CategoriesScreen(availableMeals: widget.availableMeals),
       const FavoritesScreen(),
-      const YourRecipesScreen(),
+      YourRecipesScreen(),
       const TimerScreen(),
-    ];
-
-    final List<String> titles = [
-      'Categories',
-      'Your Favorites',
-      'Your Recipes',
-      'Timer',
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(titles[_selectedIndex]),
+        title: const Text('Menu'),
         actions: [
-          if (_selectedIndex == 0)
-            IconButton(
-              icon: const Icon(Icons.filter_list),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) => const FiltersScreen(),
-                  ),
-                );
-              },
-            ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
+            tooltip: 'Settings',
+          ),
         ],
       ),
-      drawer: MainDrawer(setSelectedIndex: _setSelectedIndex),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: pages,
+      drawer: MainDrawer(
+        setSelectedIndex: _setSelectedIndex,
+        currentIndex: _selectedIndex,
+      ),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: pages[_selectedIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        selectedFontSize: 14,
-        unselectedFontSize: 12,
         currentIndex: _selectedIndex,
         onTap: _setSelectedIndex,
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.black54,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.category),

@@ -1,0 +1,20 @@
+{
+  "settings": "Stillingar",
+  "dark_mode": "Dökk stilling",
+  "language": "Tungumál",
+  "voice_commands": "Virkja raddskipanir",
+  "screen_reader": "Virkja skjálesara",
+  "categories": "Flokkar",
+  "favorites": "Uppáhalds",
+  "your_recipes": "Þínar uppskriftir",
+  "timer": "Tímar",
+  "ingredients": "Innihaldsefni",
+  "steps": "Skref",
+  "start_timer": "Byrja tímara",
+  "time_remaining": "Tími eftir",
+  "timer_complete": "Tímarinn er búinn",
+  "recipe_timer_finished": "Tíminn á uppskriftinni þinni er búinn.",
+  "ok": "Í lagi",
+  "menu": "Valmynd",
+  "share_recipe": "Deila uppskrift"
+}

@@ -1,0 +1,20 @@
+{
+  "settings": "Configuraciones",
+  "dark_mode": "Modo oscuro",
+  "language": "Idioma",
+  "voice_commands": "Habilitar comandos de voz",
+  "screen_reader": "Habilitar lector de pantalla",
+  "categories": "Categorías",
+  "favorites": "Favoritos",
+  "your_recipes": "Tus recetas",
+  "timer": "Temporizador",
+  "ingredients": "Ingredientes",
+  "steps": "Pasos",
+  "start_timer": "Iniciar Temporizador",
+  "time_remaining": "Tiempo Restante",
+  "timer_complete": "Temporizador Completo",
+  "recipe_timer_finished": "Tu temporizador de receta ha terminado.",
+  "ok": "Aceptar",
+  "menu": "Menú",
+  "share_recipe": "Compartir Receta"
+}

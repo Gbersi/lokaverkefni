@@ -44,6 +44,15 @@ class Meal {
   @HiveField(12)
   final bool isVegan;
 
+  @HiveField(13)
+  final int popularity;
+
+  @HiveField(14)
+  final String? note;
+
+  @HiveField(15)
+  final double? rating;
+
   const Meal({
     required this.id,
     required this.categories,
@@ -58,43 +67,47 @@ class Meal {
     required this.isLactoseFree,
     required this.isVegetarian,
     required this.isVegan,
+    this.popularity = 0,
+    this.note,
+    this.rating,
   });
 
-  // Convert Meal to JSON
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'categories': categories,
-    'title': title,
-    'imageUrl': imageUrl,
-    'ingredients': ingredients,
-    'steps': steps,
-    'duration': duration,
-    'affordability': affordability.name,
-    'complexity': complexity.name,
-    'isGlutenFree': isGlutenFree,
-    'isLactoseFree': isLactoseFree,
-    'isVegetarian': isVegetarian,
-    'isVegan': isVegan,
-  };
 
-  // Create Meal from JSON
-  factory Meal.fromJson(Map<String, dynamic> json) {
+  Meal copyWith({
+    String? id,
+    List<String>? categories,
+    String? title,
+    String? imageUrl,
+    List<String>? ingredients,
+    List<String>? steps,
+    int? duration,
+    Affordability? affordability,
+    Complexity? complexity,
+    bool? isGlutenFree,
+    bool? isLactoseFree,
+    bool? isVegetarian,
+    bool? isVegan,
+    int? popularity,
+    String? note,
+    double? rating,
+  }) {
     return Meal(
-      id: json['id'],
-      categories: List<String>.from(json['categories']),
-      title: json['title'],
-      imageUrl: json['imageUrl'],
-      ingredients: List<String>.from(json['ingredients']),
-      steps: List<String>.from(json['steps']),
-      duration: json['duration'],
-      affordability: Affordability.values
-          .firstWhere((e) => e.name == json['affordability']),
-      complexity: Complexity.values
-          .firstWhere((e) => e.name == json['complexity']),
-      isGlutenFree: json['isGlutenFree'],
-      isLactoseFree: json['isLactoseFree'],
-      isVegetarian: json['isVegetarian'],
-      isVegan: json['isVegan'],
+      id: id ?? this.id,
+      categories: categories ?? this.categories,
+      title: title ?? this.title,
+      imageUrl: imageUrl ?? this.imageUrl,
+      ingredients: ingredients ?? this.ingredients,
+      steps: steps ?? this.steps,
+      duration: duration ?? this.duration,
+      affordability: affordability ?? this.affordability,
+      complexity: complexity ?? this.complexity,
+      isGlutenFree: isGlutenFree ?? this.isGlutenFree,
+      isLactoseFree: isLactoseFree ?? this.isLactoseFree,
+      isVegetarian: isVegetarian ?? this.isVegetarian,
+      isVegan: isVegan ?? this.isVegan,
+      popularity: popularity ?? this.popularity,
+      note: note ?? this.note,
+      rating: rating ?? this.rating,
     );
   }
 }

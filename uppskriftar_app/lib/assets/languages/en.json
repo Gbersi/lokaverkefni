@@ -1,0 +1,20 @@
+{
+  "settings": "Settings",
+  "dark_mode": "Dark Mode",
+  "language": "Language",
+  "voice_commands": "Enable Voice Commands",
+  "screen_reader": "Enable Screen Reader",
+  "categories": "Categories",
+  "favorites": "Favorites",
+  "your_recipes": "Your Recipes",
+  "timer": "Timer",
+  "ingredients": "Ingredients",
+  "steps": "Steps",
+  "start_timer": "Start Timer",
+  "time_remaining": "Time Remaining",
+  "timer_complete": "Timer Complete",
+  "recipe_timer_finished": "Your recipe timer has finished.",
+  "ok": "OK",
+  "menu": "Menu",
+  "share_recipe": "Share Recipe"
+}

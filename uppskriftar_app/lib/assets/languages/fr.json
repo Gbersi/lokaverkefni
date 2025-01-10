@@ -1,0 +1,20 @@
+{
+  "settings": "Paramètres",
+  "dark_mode": "Mode sombre",
+  "language": "Langue",
+  "voice_commands": "Activer les commandes vocales",
+  "screen_reader": "Activer le lecteur d'écran",
+  "categories": "Catégories",
+  "favorites": "Favoris",
+  "your_recipes": "Vos recettes",
+  "timer": "Minuteur",
+  "ingredients": "Ingrédients",
+  "steps": "Étapes",
+  "start_timer": "Démarrer le Minuteur",
+  "time_remaining": "Temps Restant",
+  "timer_complete": "Minuteur Terminé",
+  "recipe_timer_finished": "Votre minuteur de recette est terminé.",
+  "ok": "OK",
+  "menu": "Menu",
+  "share_recipe": "Partager la Recette"
+}

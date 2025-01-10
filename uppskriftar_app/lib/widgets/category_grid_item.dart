@@ -16,12 +16,12 @@ class CategoryGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: onSelectCategory,
-      splashColor: Theme.of(context).primaryColor,
-      borderRadius: BorderRadius.circular(15),
-      child: Container(
-        padding: const EdgeInsets.all(15),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        margin: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -32,10 +32,22 @@ class CategoryGridItem extends StatelessWidget {
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.5),
+              blurRadius: 8,
+              offset: const Offset(2, 4),
+            ),
+          ],
         ),
-        child: Text(
-          title,
-          style: Theme.of(context).textTheme.titleLarge,
+        child: Center(
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );

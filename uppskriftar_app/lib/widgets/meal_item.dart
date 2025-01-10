@@ -1,38 +1,30 @@
 import 'package:flutter/material.dart';
 import '../models/meal.dart';
+import '../screens/meal_details.dart';
 
 class MealItem extends StatelessWidget {
   final Meal meal;
-  final VoidCallback onSelectMeal;
-  final VoidCallback? onDelete;
 
   const MealItem({
     super.key,
     required this.meal,
-    required this.onSelectMeal,
-    this.onDelete,
   });
+
+  void selectMeal(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => MealDetailsScreen(meal: meal),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onSelectMeal,
-      splashColor: Colors.teal,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+      onTap: () => selectMeal(context),
+      child: Card(
+        elevation: 4,
         margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-          color: Colors.white,
-        ),
         child: Column(
           children: [
             Stack(
@@ -49,15 +41,27 @@ class MealItem extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                if (onDelete != null)
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: onDelete,
+                Positioned(
+                  bottom: 20,
+                  right: 10,
+                  child: Container(
+                    width: 300,
+                    color: Colors.black54,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 5,
+                      horizontal: 20,
+                    ),
+                    child: Text(
+                      meal.title,
+                      style: const TextStyle(
+                        fontSize: 26,
+                        color: Colors.white,
+                      ),
+                      softWrap: true,
+                      overflow: TextOverflow.fade,
                     ),
                   ),
+                ),
               ],
             ),
             Padding(
