@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import '../services/confetti_manager.dart';
 
 class ColorHuntPage extends StatefulWidget {
   final List<String> players;
@@ -96,77 +97,97 @@ class _ColorHuntPageState extends State<ColorHuntPage> {
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.black, Colors.grey],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Find an object that is:",
-              style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: _colorMap[_targetColor],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                _targetColor,
-                style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black, Colors.grey],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
-            const SizedBox(height: 32),
-            if (!_winnerDeclared)
-              Expanded(
-                child: ListView.builder(
-                  itemCount: widget.players.length,
-                  itemBuilder: (context, index) {
-                    final playerName = widget.players[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (!_winnerDeclared) {
-                            _declareWinner(playerName);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        ),
-                        child: Text(
-                          "$playerName: I Found It!",
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      ),
-                    );
-                  },
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Find an object that is:",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                 ),
-              ),
-            if (_winnerDeclared)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  "Winner: $_winnerName!",
-                  style: const TextStyle(
-                    color: Colors.green,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(height: 16),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: _colorMap[_targetColor],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 2,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
+                  child: Text(
+                    _targetColor,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
-          ],
-        ),
+                const SizedBox(height: 32),
+                if (!_winnerDeclared)
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: widget.players.length,
+                      itemBuilder: (context, index) {
+                        final playerName = widget.players[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (!_winnerDeclared) {
+                                _declareWinner(playerName);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              padding:
+                              const EdgeInsets.symmetric(vertical: 16.0),
+                            ),
+                            child: Text(
+                              "$playerName: I Found It!",
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                if (_winnerDeclared)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Winner: $_winnerName!",
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          ConfettiManager(
+            shouldShow: _winnerDeclared,
+          ),
+        ],
       ),
     );
   }

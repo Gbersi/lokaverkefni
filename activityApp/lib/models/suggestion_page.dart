@@ -11,6 +11,24 @@ class SuggestionPage extends StatelessWidget {
     required this.onDone,
     super.key,
   });
+  static final List<String> hangmanSuggestions = [
+    "Apple", "Banana", "Orange", "Grape", "Car", "House", "Cat", "Dog",
+    "Lion", "Tiger", "Bird", "Fish", "Sun", "Moon", "Star", "Tree",
+    "Flower", "Chair", "Table", "Ball", "Book", "Clock", "Piano",
+    "Drum", "Shark", "Whale", "Bear", "Frog", "Horse", "Cow", "Pig",
+    "Duck", "Goat", "Fox", "Rabbit", "Snake", "Elephant", "Zebra",
+    "Kite", "Plane", "Train", "Bus", "Boat", "Rocket", "River",
+    "Beach", "Mountain", "Castle", "Crown", "Queen", "King", "Knight",
+    "Unicorn", "Dragon", "Robot", "Laptop", "Phone", "Camera",
+    "Rainbow", "Cloud", "Snowman", "Cookie", "Cake", "Pizza", "Burger",
+    "Milk", "Ice Cream", "Jelly", "Panda", "Monkey", "Penguin",
+    "Balloon", "Ladder", "Bridge", "Campfire", "Flashlight", "Tent",
+    "Treasure", "Dinosaur", "Wand", "Genie", "Volcano", "Butterfly",
+    "Ladybug", "Cupcake", "Lemon", "Giraffe", "Carrot", "Cactus",
+    "Peach", "Chalk", "Telescope", "Snail", "Sailboat", "Helmet",
+    "Compass", "Bicycle", "Drumstick", "Guitar", "Basket", "Chocolate"
+  ];
+
   static final List<String> pictionarySuggestions = [
     "A cat", "A dog", "A house", "A car", "A tree", "A beach", "A rocket",
     "A boat", "A robot", "A mountain", "A horse", "A bike", "A lion",

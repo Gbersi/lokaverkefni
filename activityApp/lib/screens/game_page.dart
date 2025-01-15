@@ -1,13 +1,16 @@
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:activityapp/models/games.dart';
 import '../Game Functions/mastermind_page.dart';
 import '../Game Functions/tic_tac_toe_page.dart';
+import '../widgets/animated_button.dart';
+import '../widgets/gradient_card.dart';
 import 'player_selection_page.dart';
 import 'package:activityapp/models/suggestion_page.dart';
 import 'package:activityapp/Game Functions/colorhunt_page.dart';
-
+import 'package:activityapp/Game Functions/hangman_page.dart';
 
 class GamePage extends StatefulWidget {
   final List<String> players;
@@ -16,15 +19,15 @@ class GamePage extends StatefulWidget {
   final VoidCallback onQuit;
 
   const GamePage({
-    super.key,
     required this.players,
     required this.rounds,
     required this.availableGames,
     required this.onQuit,
+    super.key,
   });
 
   @override
-  State<GamePage> createState() => _GamePageState();
+  _GamePageState createState() => _GamePageState();
 }
 
 class _GamePageState extends State<GamePage> {
@@ -58,7 +61,6 @@ class _GamePageState extends State<GamePage> {
     _currentGame = widget.availableGames[randomIndex];
     setState(() {});
 
-    // Navigate based on the selected game
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_currentGame!.name == "Pictionary" || _currentGame!.name == "Charades") {
         _navigateToPlayerSelection();
@@ -68,20 +70,56 @@ class _GamePageState extends State<GamePage> {
         _navigateToMastermind();
       } else if (_currentGame!.name == "Color Hunt") {
         _navigateToColorHunt();
+      } else if (_currentGame!.name == "Hangman") {
+        _navigateToHangman();
       }
     });
+  }
+
+  void _navigateToHangman() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => const HangmanPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final offsetAnimation = animation.drive(tween);
+
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
+      ),
+    ).then((_) => _nextRound());
   }
 
   void _navigateToTicTacToe() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => TicTacToePage(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => TicTacToePage(
+          mode: 'Tic Tac Toe',
           onQuit: () {
             Navigator.pop(context);
             _nextRound();
           },
         ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final offsetAnimation = animation.drive(tween);
+
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
       ),
     );
   }
@@ -89,14 +127,26 @@ class _GamePageState extends State<GamePage> {
   void _navigateToMastermind() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => MastermindPage(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => MastermindPage(
           players: widget.players,
           onQuit: () {
             Navigator.pop(context);
             _nextRound();
           },
         ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final offsetAnimation = animation.drive(tween);
+
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
       ),
     );
   }
@@ -104,8 +154,8 @@ class _GamePageState extends State<GamePage> {
   void _navigateToPlayerSelection() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => PlayerSelectionPage(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => PlayerSelectionPage(
           players: widget.players,
           message: _currentGame!.name == "Pictionary"
               ? "Choose a player to draw"
@@ -118,6 +168,18 @@ class _GamePageState extends State<GamePage> {
             _startTimer();
           },
         ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final offsetAnimation = animation.drive(tween);
+
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
       ),
     );
   }
@@ -125,14 +187,26 @@ class _GamePageState extends State<GamePage> {
   void _navigateToColorHunt() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => ColorHuntPage(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => ColorHuntPage(
           players: widget.players,
           onQuit: () {
             Navigator.pop(context);
             _nextRound();
           },
         ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final offsetAnimation = animation.drive(tween);
+
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
       ),
     );
   }
@@ -189,7 +263,8 @@ class _GamePageState extends State<GamePage> {
                 ],
               ),
               actions: [
-                ElevatedButton(
+                AnimatedButton(
+                  label: "Set Timer",
                   onPressed: () {
                     Navigator.of(context).pop();
                     setState(() {
@@ -197,7 +272,6 @@ class _GamePageState extends State<GamePage> {
                       _isTimerRunning = false;
                     });
                   },
-                  child: const Text('Set Timer'),
                 ),
               ],
             );
@@ -234,9 +308,9 @@ class _GamePageState extends State<GamePage> {
         title: const Text('No Games Selected'),
         content: const Text('Please select at least one game from the main menu.'),
         actions: [
-          TextButton(
+          AnimatedButton(
+            label: "OK",
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
           ),
         ],
       ),
@@ -251,9 +325,9 @@ class _GamePageState extends State<GamePage> {
         title: const Text('Game Over!'),
         content: const Text('The game has ended.'),
         actions: [
-          ElevatedButton(
+          AnimatedButton(
+            label: "Main Menu",
             onPressed: widget.onQuit,
-            child: const Text('Main Menu'),
           ),
         ],
       ),
@@ -337,15 +411,13 @@ class _GamePageState extends State<GamePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton.icon(
+                  AnimatedButton(
+                    label: _isTimerRunning ? "Stop Timer" : "Start Timer",
                     onPressed: _isTimerRunning ? _stopTimer : _startTimer,
-                    icon: Icon(_isTimerRunning ? Icons.pause : Icons.timer),
-                    label: Text(_isTimerRunning ? 'Stop Timer' : 'Start Timer'),
                   ),
-                  ElevatedButton.icon(
+                  AnimatedButton(
+                    label: "Next Round",
                     onPressed: _nextRound,
-                    icon: const Icon(Icons.skip_next),
-                    label: const Text('Next Round'),
                   ),
                 ],
               ),
@@ -353,32 +425,21 @@ class _GamePageState extends State<GamePage> {
                 child: ListView.builder(
                   itemCount: widget.players.length,
                   itemBuilder: (context, index) {
-                    return Card(
-                      color: Colors.grey[800],
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      elevation: 2,
-                      child: ListTile(
-                        title: Text(
-                          widget.players[index],
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _scores[index].toString(),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add, color: Colors.green),
-                              onPressed: () => _updateScore(index, 1),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.remove, color: Colors.red),
-                              onPressed: () => _updateScore(index, -1),
-                            ),
-                          ],
-                        ),
+                    return GradientCard(
+                      title: widget.players[index],
+                      subtitle: "Score: ${_scores[index]}",
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.add, color: Colors.green),
+                            onPressed: () => _updateScore(index, 1),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.remove, color: Colors.red),
+                            onPressed: () => _updateScore(index, -1),
+                          ),
+                        ],
                       ),
                     );
                   },

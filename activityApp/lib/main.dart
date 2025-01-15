@@ -1,29 +1,24 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'screens/main_menu.dart';
+import 'package:provider/provider.dart';
+import 'firebase/app.dart';
+import 'firebase_options.dart';
+import 'providers/game_provider.dart';
 
-void main() {
+const clientId = 'AIzaSyBvVEzZMZIjrvaWoVqIw0JEl6jquY1KayA';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Family Game Night',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black54),
-        useMaterial3: true,
-        textTheme: const TextTheme(
-          headlineSmall: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-        ),
-        appBarTheme: const AppBarTheme(
-          elevation: 5,
-          backgroundColor: Color.fromARGB(253, 145, 145, 145),
-          foregroundColor: Colors.black54,
-          centerTitle: true,
-        ),
-      ),
-      home:  MainMenu(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GameProvider()), // Add GameProvider
+      ],
+      child: const MyApp(),
     ),
   );
 }
-
-
-
