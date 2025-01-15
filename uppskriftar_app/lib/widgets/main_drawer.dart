@@ -24,7 +24,7 @@ class MainDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.category),
             title: const Text('Categories'),
-            selected: currentIndex == 0, // Highlight active page
+            selected: currentIndex == 0,
             onTap: () {
               if (currentIndex != 0) {
                 setSelectedIndex(0);

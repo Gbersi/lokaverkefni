@@ -36,7 +36,7 @@ class TimerScreen extends ConsumerWidget {
     final timerState = ref.watch(timerProvider);
     final timerNotifier = ref.read(timerProvider.notifier);
 
-    // Show "time's up" dialog if timer reaches 0
+
     if (timerState.remainingTime == 0 && !timerState.isRunning) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showTimeUpDialog(context);

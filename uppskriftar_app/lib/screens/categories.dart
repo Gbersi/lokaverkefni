@@ -5,7 +5,6 @@ import '../providers/filters_provider.dart';
 import '../screens/meals.dart';
 import '../screens/meal_details.dart';
 import '../screens/your_recipes.dart';
-import '../screens/add_recipe.dart'; // Import Add Recipe Screen
 import '../widgets/category_grid_item.dart';
 import 'filters.dart';
 
@@ -17,9 +16,9 @@ class CategoriesScreen extends ConsumerStatefulWidget {
 }
 
 class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
-  String _searchQuery = ''; // State for the search query
-  String _sortOption = 'popularity'; // Default sorting option
-  final _focusNode = FocusNode(); // To control focus for the search bar
+  String _searchQuery = '';
+  String _sortOption = 'popularity';
+  final _focusNode = FocusNode();
 
   void _sortRecipes(List<Meal> recipes) {
     if (_sortOption == 'popularity') {
@@ -35,10 +34,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   Widget build(BuildContext context) {
     final filteredMeals = ref.watch(filteredMealsProvider);
 
-    // Apply sorting
+
     _sortRecipes(filteredMeals);
 
-    // Filter by search query
+
     final searchResults = filteredMeals.where((meal) {
       return meal.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           meal.ingredients.any((ingredient) =>
@@ -166,7 +165,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 itemBuilder: (ctx, index) {
                   final catData = categories[index];
 
-                  // Check for "Your Recipes" category
+
                   if (catData['id'] == 'your-recipes') {
                     return CategoryGridItem(
                       id: catData['id'] as String,
@@ -182,7 +181,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     );
                   }
 
-                  // Handle other categories
+
                   return CategoryGridItem(
                     id: catData['id'] as String,
                     title: catData['title'] as String,

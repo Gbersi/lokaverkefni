@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../main.dart';
 
-
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -10,6 +9,8 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
     final themeNotifier = ref.read(themeProvider.notifier);
+    final currentLanguage = ref.watch(languageProvider);
+    final languageNotifier = ref.read(languageProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
@@ -37,6 +38,40 @@ class SettingsScreen extends ConsumerWidget {
                 DropdownMenuItem(
                   value: ThemeMode.dark,
                   child: Text('Dark'),
+                ),
+              ],
+            ),
+          ),
+          ListTile(
+            title: const Text('Language'),
+            subtitle: const Text('Select your preferred language'),
+            trailing: DropdownButton<String>(
+              value: currentLanguage,
+              onChanged: (newLanguage) {
+                if (newLanguage != null) {
+                  languageNotifier.state = newLanguage;
+                }
+              },
+              items: const [
+                DropdownMenuItem(
+                  value: 'en',
+                  child: Text('English'),
+                ),
+                DropdownMenuItem(
+                  value: 'es',
+                  child: Text('Español'),
+                ),
+                DropdownMenuItem(
+                  value: 'fr',
+                  child: Text('Français'),
+                ),
+                DropdownMenuItem(
+                  value: 'de',
+                  child: Text('Deutsch'),
+                ),
+                DropdownMenuItem(
+                  value: 'is',
+                  child: Text('Íslenska'),
                 ),
               ],
             ),

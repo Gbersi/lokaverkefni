@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
 import '../providers/favorites_provider.dart';
 import '../models/meal.dart';
 import '../screens/meal_details.dart';
@@ -23,7 +22,7 @@ class FavoritesScreen extends ConsumerWidget {
         return ListTile(
           title: GestureDetector(
             onTap: () {
-              // Navigate to MealDetailsScreen when recipe name is clicked
+
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (ctx) => MealDetailsScreen(meal: meal),
@@ -34,7 +33,7 @@ class FavoritesScreen extends ConsumerWidget {
               meal.title,
               style: const TextStyle(
                 fontSize: 18,
-                color: Colors.blue, // Highlight clickable text
+                color: Colors.blue,
                 decoration: TextDecoration.underline,
               ),
             ),

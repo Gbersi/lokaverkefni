@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
-// A global context for showing SnackBar (ensure it is set in your app's main widget tree)
+
 late BuildContext globalContext;
 
 class Achievement {
@@ -73,7 +73,7 @@ class AchievementsNotifier extends StateNotifier<List<Achievement>> {
   }
 
   void _notifyAchievementUnlocked(Achievement achievement) {
-    // Display a SnackBar to notify the user
+
     ScaffoldMessenger.of(globalContext).showSnackBar(
       SnackBar(
         content: Text('Achievement Unlocked: ${achievement.title}!'),

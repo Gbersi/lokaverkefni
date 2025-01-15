@@ -74,30 +74,30 @@ StateNotifierProvider<FilterSearchNotifier, FilterSearchState>(
 );
 
 final filteredMealsProvider = Provider<List<Meal>>((ref) {
-  final allMeals = dummyMeals; // Replace with your actual meal data source
+  final allMeals = dummyMeals;
   final filterSearchState = ref.watch(filterSearchProvider);
 
   final filters = filterSearchState.filters;
   final searchQuery = filterSearchState.searchQuery;
 
   return allMeals.where((meal) {
-    // Apply filters
+
     if (filters[Filter.glutenFree]! && !meal.isGlutenFree) return false;
     if (filters[Filter.lactoseFree]! && !meal.isLactoseFree) return false;
     if (filters[Filter.vegetarian]! && !meal.isVegetarian) return false;
     if (filters[Filter.vegan]! && !meal.isVegan) return false;
 
-    // Apply cooking time filters
+
     if (filters[Filter.cookingTime15]! && meal.duration > 15) return false;
     if (filters[Filter.cookingTime30]! && meal.duration > 30) return false;
     if (filters[Filter.cookingTime60]! && meal.duration > 60) return false;
 
-    // Apply difficulty filters
+
     if (filters[Filter.easy]! && meal.complexity != Complexity.easy) return false;
     if (filters[Filter.medium]! && meal.complexity != Complexity.medium) return false;
     if (filters[Filter.hard]! && meal.complexity != Complexity.hard) return false;
 
-    // Apply search query
+
     if (searchQuery.isNotEmpty) {
       final matchesTitle = meal.title.toLowerCase().contains(searchQuery);
       final matchesIngredients = meal.ingredients.any(

@@ -27,7 +27,7 @@ class TimerNotifier extends StateNotifier<TimerState> {
   }
 
   void startTimer() {
-    if (state.isRunning) return; // Prevent starting multiple timers
+    if (state.isRunning) return;
 
     state = state.copyWith(isRunning: true);
 

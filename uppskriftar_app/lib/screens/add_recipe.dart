@@ -33,34 +33,34 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       return;
     }
 
-    // Map dropdown values to enums
+
     final complexity = Complexity.values.firstWhere(
             (c) => c.toString().split('.').last.toLowerCase() == selectedComplexity.toLowerCase());
     final affordability = Affordability.values.firstWhere(
             (a) => a.toString().split('.').last.toLowerCase() == selectedAffordability.toLowerCase());
 
-    // Create a Meal object
+
     final newMeal = Meal(
-      id: DateTime.now().toString(), // Unique ID
-      categories: ['your-recipes'], // Default category for user-added recipes
+      id: DateTime.now().toString(),
+      categories: ['your-recipes'],
       title: title,
       imageUrl: imageUrl,
       ingredients: ingredients.map((e) => e.trim()).toList(),
       steps: steps.map((e) => e.trim()).toList(),
-      duration: 30, // Default duration (or add a field for this if needed)
+      duration: 30,
       affordability: affordability,
       complexity: complexity,
-      isGlutenFree: false, // Set default or add fields for these
+      isGlutenFree: false,
       isVegan: false,
       isVegetarian: false,
       isLactoseFree: false,
     );
 
-    // Save the recipe using Hive
+
     final Box<Meal> mealBox = Hive.box<Meal>('recipes');
     await mealBox.add(newMeal);
 
-    // Show a success message
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Recipe added successfully!')),
     );
