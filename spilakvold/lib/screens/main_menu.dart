@@ -1,11 +1,11 @@
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../models/game_selection_page.dart';
-import '../models/games.dart';
 import '../providers/game_provider.dart';
+import '../providers/player_provider.dart';
+import '../services/theme_animations_updates.dart';
+import '../services/theme_notifier.dart';
 import '../widgets/animated_button.dart';
 import '../widgets/gradient_card.dart';
 import 'dashboard_page.dart';
@@ -21,67 +21,43 @@ class MainMenu extends StatefulWidget {
 
 class MainMenuState extends State<MainMenu> {
   List<String> players = [];
-  List<Game> availableGames = getGames();
-  List<Game> _selectedGames = List.from(getGames());
+  List<Game> availableGames = [];
+  List<Game> _selectedGames = [];
   final TextEditingController _playerController = TextEditingController();
   int _rounds = 1;
-  ThemeData _currentTheme = ThemeData.light();
-  String _selectedTheme = 'Light';
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
       final gameProvider = Provider.of<GameProvider>(context, listen: false);
+      final playerProvider = Provider.of<PlayerProvider>(context, listen: false);
+
       setState(() {
-        players = gameProvider.players.keys.toList();
+        availableGames = gameProvider.getGames();
         _selectedGames = List.from(availableGames);
+        players = playerProvider.players.keys.toList();
       });
     });
   }
 
   void _addPlayer(String playerName) {
-    final gameProvider = Provider.of<GameProvider>(context, listen: false);
-    if (playerName.isNotEmpty && !gameProvider.players.containsKey(playerName)) {
-      gameProvider.addPlayer(playerName, 'https://example.com/default-avatar.png');
+    final playerProvider = Provider.of<PlayerProvider>(context, listen: false);
+    if (playerName.isNotEmpty && !playerProvider.players.containsKey(playerName)) {
+      playerProvider.addPlayer(playerName, 'https://example.com/default-avatar.png');
       setState(() {
-        players = gameProvider.players.keys.toList();
+        players = playerProvider.players.keys.toList();
         _playerController.clear();
       });
     }
   }
 
   void _removePlayer(String playerName) {
-    final gameProvider = Provider.of<GameProvider>(context, listen: false);
-    gameProvider.removePlayer(playerName);
+    final playerProvider = Provider.of<PlayerProvider>(context, listen: false);
+    playerProvider.removePlayer(playerName);
     setState(() {
-      players = gameProvider.players.keys.toList();
+      players = playerProvider.players.keys.toList();
     });
-  }
-
-  void _changeTheme(String? theme) {
-    if (theme != null) {
-      setState(() {
-        _selectedTheme = theme;
-        switch (theme) {
-          case 'Dark':
-            _currentTheme = ThemeData.dark();
-            break;
-          case 'Custom':
-            _currentTheme = ThemeData(
-              primarySwatch: Colors.purple,
-              brightness: Brightness.light,
-              scaffoldBackgroundColor: Colors.purple.shade50,
-              appBarTheme: const AppBarTheme(color: Colors.purple),
-            );
-            break;
-          case 'Light':
-          default:
-            _currentTheme = ThemeData.light();
-        }
-      });
-    }
   }
 
   void _navigateToGameSelectionPage() async {
@@ -110,18 +86,18 @@ class MainMenuState extends State<MainMenu> {
   }
 
   void _navigateToGamePage() {
-    final gameProvider = Provider.of<GameProvider>(context, listen: false);
-    players = gameProvider.players.keys.toList();
+    final playerProvider = Provider.of<PlayerProvider>(context, listen: false);
+    players = playerProvider.players.keys.toList();
 
     if (players.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("vinsamlegast bættu við a.m.k einum spilara.")),
+        const SnackBar(content: Text("Vinsamlegast bættu við a.m.k einum Leikmanni .")),
       );
       return;
     }
     if (_selectedGames.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("vinsamlegast veldu a.m.k einn leik til að spila.")),
+        const SnackBar(content: Text("Vinsamlegast veldu A.m.k einn leik til að byrja.")),
       );
       return;
     }
@@ -143,112 +119,69 @@ class MainMenuState extends State<MainMenu> {
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isWideScreen = screenWidth > 600;
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
 
-    return Theme(
-      data: _currentTheme,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Aðal Valmynd'),
-          actions: [
-            PopupMenuButton<String>(
-              icon: const Icon(Icons.settings),
-              onSelected: _changeTheme,
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'Light',
-                  child: Row(
-                    children: [
-                      if (_selectedTheme == 'Light') const Icon(Icons.check, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      const Text('Light Theme'),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'Dark',
-                  child: Row(
-                    children: [
-                      if (_selectedTheme == 'Dark') const Icon(Icons.check, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      const Text('Dark Theme'),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'Custom',
-                  child: Row(
-                    children: [
-                      if (_selectedTheme == 'Custom') const Icon(Icons.check, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      const Text('Custom Theme'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                if (!mounted) return;
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-            ),
-          ],
-        ),
-        body: _buildBody(isWideScreen),
-        bottomNavigationBar: _buildBottomNavigationBar(),
-      ),
-    );
-  }
+    final BoxDecoration backgroundGradient = themeNotifier.isDarkTheme
+        ? AppThemes.darkBackgroundGradient
+        : themeNotifier.isCustomTheme
+        ? AppThemes.customBackgroundGradient
+        : AppThemes.lightBackgroundGradient;
 
-  Widget _buildBody(bool isWideScreen) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.blueGrey, Colors.black],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Aðal Valmynd'),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.settings),
+            onSelected: (value) {
+              if (value == 'Light') themeNotifier.setThemeMode(ThemeMode.light);
+              if (value == 'Dark') themeNotifier.setThemeMode(ThemeMode.dark);
+              if (value == 'Custom') themeNotifier.setCustomTheme();
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'Light', child: Text('Light Theme')),
+              PopupMenuItem(value: 'Dark', child: Text('Dark Theme')),
+              PopupMenuItem(value: 'Custom', child: Text('Custom Theme')),
+            ],
+          ),
+        ],
       ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: isWideScreen ? 32 : 16, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-              child: Image.network(
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA0UTfT73CQZwJmfedJSzlS0SJEt8hTT-QPQ&s',
-                height: 200,
-                fit: BoxFit.cover,
+      body: Container(
+        decoration: backgroundGradient,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
+                child: Image.network(
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA0UTfT73CQZwJmfedJSzlS0SJEt8hTT-QPQ&s',
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Leikmenn",
-              style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            _buildPlayerInput(),
-            const SizedBox(height: 8),
-            _buildPlayerList(),
-            const SizedBox(height: 8),
-            _buildRoundsDropdown(),
-            const SizedBox(height: 16),
-            AnimatedButton(
-              label: "Spila Leik",
-              onPressed: _navigateToGamePage,
-            ),
-          ],
+              const SizedBox(height: 16),
+              const Text("Leikmenn", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              _buildPlayerInput(),
+              const SizedBox(height: 8),
+              _buildPlayerList(),
+              const SizedBox(height: 8),
+              const Text("Lotur", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              _buildRoundsDropdown(),
+              const SizedBox(height: 16),
+              AnimatedButton(label: "Byrja Leik", onPressed: _navigateToGamePage),
+            ],
+          ),
         ),
       ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
+
 
   Widget _buildPlayerInput() {
     return TextField(

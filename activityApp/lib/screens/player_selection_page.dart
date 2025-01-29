@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:activityapp/models/suggestion_page.dart';
 
 class PlayerSelectionPage extends StatelessWidget {
   final List<String> players;
@@ -75,6 +74,54 @@ class PlayerSelectionPage extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SuggestionPage extends StatelessWidget {
+  final String playerName;
+  final List<String> suggestions;
+  final VoidCallback onDone;
+
+  const SuggestionPage({
+    required this.playerName,
+    required this.suggestions,
+    required this.onDone,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('$playerName\'s Suggestions'),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blueGrey, Colors.black],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: ListView.builder(
+          itemCount: suggestions.length,
+          itemBuilder: (context, index) {
+            return Card(
+              color: Colors.grey[800],
+              margin: const EdgeInsets.symmetric(vertical: 5),
+              child: ListTile(
+                title: Text(
+                  suggestions[index],
+                  style: const TextStyle(color: Colors.white),
+                ),
+                trailing: const Icon(Icons.check, color: Colors.green),
+                onTap: onDone,
+              ),
+            );
+          },
         ),
       ),
     );

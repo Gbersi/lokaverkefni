@@ -3,7 +3,7 @@
   "packages": [
     {
       "name": "_flutterfire_internals",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/_flutterfire_internals-1.3.49",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/_flutterfire_internals-1.3.50",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -24,6 +24,48 @@
       "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.11.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
+    },
+    {
+      "name": "audioplayers",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/audioplayers-5.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_android",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/audioplayers_android-4.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_darwin",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/audioplayers_darwin-5.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_linux",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/audioplayers_linux-3.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_platform_interface",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/audioplayers_platform_interface-6.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_web",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/audioplayers_web-4.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_windows",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/audioplayers_windows-3.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "boolean_selector",
@@ -75,7 +117,7 @@
     },
     {
       "name": "device_info_plus",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/device_info_plus-11.2.1",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/device_info_plus-11.2.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -117,43 +159,43 @@
     },
     {
       "name": "firebase_app_check",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_app_check-0.3.2",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_app_check-0.3.2+1",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "firebase_app_check_platform_interface",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_app_check_platform_interface-0.1.1",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_app_check_platform_interface-0.1.1+1",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "firebase_app_check_web",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_app_check_web-0.2.0+4",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_app_check_web-0.2.0+5",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "firebase_auth",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_auth-5.4.0",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_auth-5.4.1",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "firebase_auth_platform_interface",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_auth_platform_interface-7.5.0",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_auth_platform_interface-7.5.1",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "firebase_auth_web",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_auth_web-5.13.6",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_auth_web-5.13.7",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "firebase_core",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_core-3.10.0",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_core-3.10.1",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -171,19 +213,19 @@
     },
     {
       "name": "firebase_data_connect",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_data_connect-0.1.2+6",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_data_connect-0.1.2+7",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "firebase_dynamic_links",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_dynamic_links-6.1.0",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_dynamic_links-6.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "firebase_dynamic_links_platform_interface",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_dynamic_links_platform_interface-0.2.7",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_dynamic_links_platform_interface-0.2.7+1",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -228,6 +270,12 @@
       "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/fixnum-1.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.1"
+    },
+    {
+      "name": "flip_card",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/flip_card-0.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "flutter",
@@ -369,9 +417,9 @@
     },
     {
       "name": "http",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.2.2",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.3.0",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.4"
     },
     {
       "name": "http2",
@@ -531,13 +579,13 @@
     },
     {
       "name": "shared_preferences",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences-2.3.5",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences-2.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
     {
       "name": "shared_preferences_android",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_android-2.4.1",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_android-2.4.4",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -584,6 +632,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "sprintf",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/sprintf-7.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "stack_trace",
       "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/stack_trace-1.11.1",
       "packageUri": "lib/",
@@ -600,6 +654,12 @@
       "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/string_scanner-1.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
+    },
+    {
+      "name": "synchronized",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/synchronized-3.3.0+3",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
     },
     {
       "name": "term_glyph",
@@ -620,8 +680,14 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "uuid",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/uuid-4.5.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "vector_graphics",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/vector_graphics-1.1.15",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/vector_graphics-1.1.16",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -651,7 +717,7 @@
     },
     {
       "name": "vibration_platform_interface",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/vibration_platform_interface-0.0.2",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/vibration_platform_interface-0.0.3",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -669,7 +735,7 @@
     },
     {
       "name": "win32",
-      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/win32-5.10.0",
+      "rootUri": "file:///C:/Users/gunna/AppData/Local/Pub/Cache/hosted/pub.dev/win32-5.10.1",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -698,7 +764,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2025-01-15T09:28:07.862546Z",
+  "generated": "2025-01-29T10:04:36.984865Z",
   "generator": "pub",
   "generatorVersion": "3.5.4",
   "flutterRoot": "file:///C:/Users/gunna/OneDrive/Desktop/sdk/flutter",

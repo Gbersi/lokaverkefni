@@ -1,66 +1,105 @@
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/theme_animations_updates.dart';
+import '../services/theme_notifier.dart';
 
-class OnboardingPage extends StatelessWidget {
+
+class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
   @override
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  final List<Map<String, dynamic>> _tips = [
+    {
+      'title': 'Bæta við Leikmönnum',
+      'content': 'Byrjaðu á því að skrá niður nöfnin á öllum sem taka þátt í leiknum.',
+      'icon': Icons.group,
+      'hint': 'notaðu mismunandi nöfn til að fylgjast betur með stigagjöfinni.',
+    },
+    {
+      'title': 'Velja Leiki ',
+      'content': 'Veldu úr leikjunum á listanum þá leiki sem þið viljið spila.',
+      'icon': Icons.games,
+      'hint': 'þú getur filterað leikina á listanum eftir erfiðleikastigi eða fjölda Leikmanna.',
+    },
+    {
+      'title': 'Stilla Lotur ',
+      'content': 'ákveðið hversu margar lotur af mismunandi leikjum þið viljið spila.',
+      'icon': Icons.repeat,
+      'hint': 'fáar lotur virka best fyrir stutt spilakvöld!',
+    },
+    {
+      'title': 'Fylgstu með stigunum',
+      'content': 'Forritið fylgist með stigunum og sigrunum hjá Leikmönnum en leikmenn þurfa að skrá niður stigin sjálfir eftir hvern leik.',
+      'icon': Icons.score,
+      'hint': 'þú getur heimsótt upplýsingar síðuna til að sjá nánari upplýsingar um leikmenn og stig .',
+    },
+    {
+      'title': 'Tilbúin að spila?',
+      'content': 'Byrjaðu fyrsta Leikinn þinn og njóttu með vinum og fjölskyldu!',
+      'icon': Icons.play_arrow,
+      'hint': 'Hafið gaman og megi besti leikmaðurinn sigra!',
+    },
+  ];
+
+  void _nextPage() {
+    if (_currentPage < _tips.length - 1) {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+      setState(() => _currentPage++);
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+    final BoxDecoration backgroundGradient = themeNotifier.isDarkTheme
+        ? AppThemes.darkBackgroundGradient
+        : themeNotifier.isCustomTheme
+        ? AppThemes.customBackgroundGradient
+        : AppThemes.lightBackgroundGradient;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Velkomin í Spilakvöld!'),
       ),
-      body: PageView(
-        children: [
-          _buildPage(
-            title: 'Bæta við Spilara',
-            content: 'Byrjaðu á að skrá nöfnin á öllum leikmönnum sem munu spila.',
-            icon: Icons.group,
-            hint: 'notaðu mismunandi nöfn til að geta fylgst betur með stigunum.',
-          ),
-          _buildPage(
-            title: 'Velja Leik',
-            content: 'Veldu Leikina sem þú villt spila frá listanum.',
-            icon: Icons.games,
-            hint: 'Þú getur flokkað leikina eftir erfiðleikastigi eða fjölda spilara.',
-          ),
-          _buildPage(
-            title: 'Stilltu Lotur',
-            content: 'Veldu hversu margar lotur þú villt spila í einum leik',
-            icon: Icons.repeat,
-            hint: 'Fáar lotur virka best fyrir stutta leiki!',
-          ),
-          _buildPage(
-            title: 'fylgstu með Stigum',
-            content: 'Forritið tekur niður sjálfkrafa stigafjölda spilara.',
-            icon: Icons.score,
-            hint: 'Kíktu á Upplýsinga síðuna til að sjá stigafjölda og upplýsingar um leikmenn.',
-          ),
-          _buildPage(
-            title: 'Achievements',
-            content: 'Earn rewards for high scores, streaks, and other milestones.',
-            icon: Icons.emoji_events,
-            hint: 'Try to beat the highest single game score in the dashboard!',
-          ),
-          _buildPage(
-            title: 'Ready to Play?',
-            content: 'Start your game session and enjoy with friends and family!',
-            icon: Icons.play_arrow,
-            hint: 'Have fun and let the best player win!',
-          ),
-        ],
+      body: Container(
+        decoration: backgroundGradient,
+        child: PageView.builder(
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _tips.length,
+          itemBuilder: (context, index) {
+            return _buildPage(
+              title: _tips[index]['title'],
+              content: _tips[index]['content'],
+              icon: _tips[index]['icon'],
+              hint: _tips[index]['hint'],
+            );
+          },
+        ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: _nextPage,
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 12),
             backgroundColor: Colors.greenAccent,
           ),
-          child: const Text(
-            'Byrjum að spila!',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          child: Text(
+            _currentPage < _tips.length - 1 ? 'Næsta' : 'Byrjum!',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
       ),

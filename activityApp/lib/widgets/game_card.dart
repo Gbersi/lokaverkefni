@@ -29,22 +29,22 @@ class GameCard extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: isSelected
               ? const LinearGradient(
-            colors: [Colors.greenAccent, Colors.teal],
+            colors: [Color(0xFF43A047), Color(0xFF1B5E20)], // Modern green gradient
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           )
               : const LinearGradient(
-            colors: [Colors.blue, Colors.purple],
+            colors: [Color(0xFF2196F3), Color(0xFF3F51B5)], // Modern blue gradient
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: isSelected
-                  ? Colors.greenAccent.withOpacity(0.8)
+                  ? Colors.greenAccent.withOpacity(0.9)
                   : Colors.black.withOpacity(0.2),
-              blurRadius: isSelected ? 15 : 8,
+              blurRadius: isSelected ? 20 : 10,
               offset: const Offset(0, 4),
             ),
           ],
@@ -54,7 +54,7 @@ class GameCard extends StatelessWidget {
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Image.network(
                   imageUrl,
                   width: double.infinity,
@@ -65,7 +65,7 @@ class GameCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -74,7 +74,14 @@ class GameCard extends StatelessWidget {
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 18,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black26,
+                          blurRadius: 4,
+                          offset: Offset(1, 1),
+                        ),
+                      ],
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -84,17 +91,17 @@ class GameCard extends StatelessWidget {
                     subtitle,
                     style: const TextStyle(
                       color: Colors.white70,
-                      fontSize: 12,
+                      fontSize: 14,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Text(
                     description,
                     style: const TextStyle(
                       color: Colors.white70,
-                      fontSize: 12,
+                      fontSize: 14,
                     ),
-                    maxLines: 2,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],

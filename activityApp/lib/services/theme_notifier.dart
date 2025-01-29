@@ -1,23 +1,45 @@
+import 'package:activityapp/services/theme_animations_updates.dart';
 import 'package:flutter/material.dart';
-import 'package:activityapp/services//theme_animations_updates.dart';
 
-class ThemeNotifier with ChangeNotifier {
-  ThemeData _themeData = AppThemes.lightTheme;
 
-  ThemeData get themeData => _themeData;
+class ThemeNotifier extends ChangeNotifier {
+  ThemeData _currentTheme;
+  bool _isDarkMode = false;
+  bool _isCustomTheme = false;
 
-  void setTheme(String theme) {
-    switch (theme) {
-      case 'Dark':
-        _themeData = AppThemes.darkTheme;
-        break;
-      case 'Custom':
-        _themeData = AppThemes.customTheme;
-        break;
-      case 'Light':
-      default:
-        _themeData = AppThemes.lightTheme;
+  ThemeNotifier()
+      : _currentTheme = AppThemes.lightTheme;
+
+  ThemeData get currentTheme => _currentTheme;
+  bool get isDarkTheme => _isDarkMode;
+  bool get isLightTheme => !_isDarkMode && !_isCustomTheme;
+  bool get isCustomTheme => _isCustomTheme;
+
+  void setThemeMode(ThemeMode mode) {
+    if (mode == ThemeMode.dark) {
+      _isDarkMode = true;
+      _isCustomTheme = false;
+      _currentTheme = AppThemes.darkTheme;
+    } else if (mode == ThemeMode.light) {
+      _isDarkMode = false;
+      _isCustomTheme = false;
+      _currentTheme = AppThemes.lightTheme;
     }
     notifyListeners();
+  }
+
+  void setCustomTheme() {
+    _isCustomTheme = true;
+    _isDarkMode = false;
+    _currentTheme = AppThemes.customTheme;
+    notifyListeners();
+  }
+
+  void toggleTheme() {
+    if (_isDarkMode) {
+      setThemeMode(ThemeMode.light);
+    } else {
+      setThemeMode(ThemeMode.dark);
+    }
   }
 }

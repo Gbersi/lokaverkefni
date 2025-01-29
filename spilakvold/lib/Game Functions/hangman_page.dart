@@ -89,12 +89,12 @@ class _HangmanPageState extends State<HangmanPage> {
   Widget _buildHangmanDrawing() {
     final List<Widget> hangmanParts = [
       const SizedBox(),
-      const CircleAvatar(radius: 20, backgroundColor: Colors.white), // Head
-      Container(height: 50, width: 5, color: Colors.white), // Body
-      Container(height: 5, width: 30, color: Colors.white), // Left Arm
-      Container(height: 5, width: 30, color: Colors.white), // Right Arm
-      Container(height: 5, width: 30, color: Colors.white), // Left Leg
-      Container(height: 5, width: 30, color: Colors.white), // Right Leg
+      const CircleAvatar(radius: 20, backgroundColor: Colors.black87), // Head
+      Container(height: 50, width: 5, color: Colors.black), // Body
+      Container(height: 5, width: 30, color: Colors.black), // Left Arm
+      Container(height: 5, width: 30, color: Colors.black), // Right Arm
+      Container(height: 5, width: 30, color: Colors.black), // Left Leg
+      Container(height: 5, width: 30, color: Colors.black), // Right Leg
     ];
 
     return Column(

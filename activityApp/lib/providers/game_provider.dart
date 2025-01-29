@@ -1,12 +1,47 @@
 import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
-import '../models/games.dart';
+
+class Game {
+  final String name;
+  final String explanation;
+  final String imageUrl;
+  final String difficulty;
+  final int minPlayers;
+  final int maxPlayers;
+
+  Game({
+    required this.name,
+    required this.explanation,
+    required this.imageUrl,
+    this.difficulty = "Medium",
+    this.minPlayers = 1,
+    this.maxPlayers = 8,
+  });
+
+  factory Game.fromJson(Map<String, dynamic> json) {
+    return Game(
+      name: json['name'] as String,
+      explanation: json['explanation'] as String,
+      imageUrl: json['imageUrl'] as String,
+      difficulty: json['difficulty'] as String? ?? "Medium",
+      minPlayers: json['minPlayers'] as int? ?? 1,
+      maxPlayers: json['maxPlayers'] as int? ?? 8,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'explanation': explanation,
+      'imageUrl': imageUrl,
+      'difficulty': difficulty,
+      'minPlayers': minPlayers,
+      'maxPlayers': maxPlayers,
+    };
+  }
+}
 
 class GameProvider with ChangeNotifier {
-
-  Map<String, Player> players = {};
-
-
   List<Game> defaultGames = [
     Game(
       name: "Hangman",
@@ -39,6 +74,14 @@ class GameProvider with ChangeNotifier {
       minPlayers: 2,
       maxPlayers: 4,
       difficulty: "Medium",
+    ),
+    Game(
+      name: "Memory Card Game",
+      explanation: "Match all the pairs of cards to win the game.",
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaoi9UNWSAoPJl_kdzsXLpkRbGkUBsf-AMXw&s",
+      minPlayers: 1,
+      maxPlayers: 1,
+      difficulty: "Easy, Medium, Hard",
     ),
     Game(
       name: "Color Hunt",
@@ -243,16 +286,11 @@ class GameProvider with ChangeNotifier {
   Map<String, int> gamePlayCounts = {};
   List<Map<String, dynamic>> recentGames = [];
 
-  // Achievements
-  int highestScore = 0;
-  String highestScorer = "";
-
   GameProvider() {
     _loadGameState();
   }
 
   Future<void> _loadGameState() async {
-    players = await StorageService.loadPlayers();
     final loadedGames = await StorageService.loadSelectedGames();
     if (loadedGames.isNotEmpty) {
       selectedGames = loadedGames.map((name) {
@@ -276,49 +314,19 @@ class GameProvider with ChangeNotifier {
   }
 
   Future<void> saveGameState() async {
-    await StorageService.savePlayers(players);
     await StorageService.saveSelectedGames(selectedGames.map((game) => game.name).toList());
     await StorageService.saveRounds(rounds);
   }
 
-  // Add a new player with stats
-  void addPlayer(String name, [String? avatarUrl]) {
-    if (!players.containsKey(name)) {
-      players[name] = Player(name: name, avatarUrl: avatarUrl);
-      saveGameState();
-      notifyListeners();
-    }
+  List<Game> getGames() {
+    return List.from(defaultGames);
   }
-
-
-  void removePlayer(String name) {
-    players.remove(name);
-    saveGameState();
-    notifyListeners();
-  }
-
-  void updatePlayerStats(String name, {int gamesPlayed = 0, int wins = 0, int losses = 0}) {
-    if (players.containsKey(name)) {
-      players[name]!.gamesPlayed += gamesPlayed;
-      players[name]!.wins += wins;
-      players[name]!.losses += losses;
-      saveGameState();
-      notifyListeners();
-    }
-  }
-
-
-  Player? getPlayer(String name) {
-    return players[name];
-  }
-
 
   void resetSelectedGames() {
     selectedGames = List.from(defaultGames);
     saveGameState();
     notifyListeners();
   }
-
 
   void setSelectedGames(List<Game> games) {
     selectedGames = games;
@@ -354,64 +362,5 @@ class GameProvider with ChangeNotifier {
     });
     saveGameState();
     notifyListeners();
-  }
-
-  void checkAchievements(String player, int score) {
-    if (score > highestScore) {
-      highestScore = score;
-      highestScorer = player;
-    }
-    notifyListeners();
-  }
-
-  void startGame(String gameName, int roundsCount) {
-    selectedGames = [
-      defaultGames.firstWhere(
-            (game) => game.name == gameName,
-        orElse: () => Game(
-          name: gameName,
-          explanation: "",
-          imageUrl: "",
-          difficulty: "Medium",
-          minPlayers: 2,
-          maxPlayers: 4,
-        ),
-      )
-    ];
-    rounds = roundsCount;
-    saveGameState();
-    notifyListeners();
-  }
-}
-
-class Player {
-  final String name;
-  final String? avatarUrl;
-  int gamesPlayed = 0;
-  int wins = 0;
-  int losses = 0;
-
-  Player({required this.name, this.avatarUrl});
-
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'avatarUrl': avatarUrl,
-      'gamesPlayed': gamesPlayed,
-      'wins': wins,
-      'losses': losses,
-    };
-  }
-
-  double get averageScore => gamesPlayed == 0 ? 0.0 : wins / gamesPlayed;
-
-  factory Player.fromMap(Map<String, dynamic> map) {
-    return Player(
-      name: map['name'],
-      avatarUrl: map['avatarUrl'],
-    )
-      ..gamesPlayed = map['gamesPlayed']
-      ..wins = map['wins']
-      ..losses = map['losses'];
   }
 }

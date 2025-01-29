@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
-import '../models/games.dart';
-import '../widgets/animated_button.dart';
-import '../widgets/game_card.dart';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/game_provider.dart';
+import '../services/theme_animations_updates.dart';
+import '../services/theme_notifier.dart';
+import '../widgets/game_card.dart';
 
 class GameSelectionPage extends StatefulWidget {
   final List<Game> availableGames;
@@ -25,6 +28,7 @@ class GameSelectionPage extends StatefulWidget {
 class _GameSelectionPageState extends State<GameSelectionPage> {
   late List<Game> _selectedGames;
   bool _filterByPlayerCount = false;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -69,82 +73,118 @@ class _GameSelectionPageState extends State<GameSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+    final BoxDecoration backgroundGradient = themeNotifier.isDarkTheme
+        ? AppThemes.darkBackgroundGradient
+        : themeNotifier.isCustomTheme
+        ? AppThemes.customBackgroundGradient
+        : AppThemes.lightBackgroundGradient;
+
     final filteredGames = _filterGames();
-    final theme = Theme.of(context);
 
-    return Theme(
-      data: theme,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Veldu Leiki "),
-          actions: [
-            IconButton(
-              icon: Icon(_filterByPlayerCount ? Icons.group : Icons.group_off),
-              onPressed: () {
-                setState(() {
-                  _filterByPlayerCount = !_filterByPlayerCount;
-                });
-              },
-              tooltip: "Filtera eftir fjölda spilara ",
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Veldu Leiki"),
+        centerTitle: true,
+        backgroundColor: Colors.grey.shade800,
+        elevation: 4,
+        actions: [
+          IconButton(
+            icon: Icon(
+              _filterByPlayerCount ? Icons.filter_alt : Icons.filter_alt_off,
+              color: Colors.white,
             ),
-          ],
-        ),
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blueGrey, Colors.black],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: filteredGames.isNotEmpty
-              ? GridView.builder(
-            padding: const EdgeInsets.all(12.0),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
-            itemCount: filteredGames.length,
-            itemBuilder: (context, index) {
-              final game = filteredGames[index];
-              final isSelected = _selectedGames.contains(game);
-
-              return GameCard(
-                title: game.name,
-                subtitle: "${game.minPlayers}-${game.maxPlayers} Spilarar",
-                description: game.explanation,
-                imageUrl: game.imageUrl,
-                isSelected: isSelected,
-                onTap: () => _toggleSelection(game),
-              );
+            onPressed: () {
+              setState(() {
+                _filterByPlayerCount = !_filterByPlayerCount;
+              });
             },
-          )
-              : const Center(
-            child: Text(
-              "Engir Leikir passa við eftirfarandi Filter .",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
+            tooltip: "Filtera eftir fjölda leikmanna",
           ),
-        ),
-        floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        ],
+      ),
+      body: Container(
+        decoration: backgroundGradient,
+        child: Column(
           children: [
-            AnimatedButton(
-              label: "Velja Allt",
-              onPressed: _selectAllGames,
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "Veldu leiki til að spila",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black26,
+                      blurRadius: 4,
+                      offset: Offset(2, 2),
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
-            AnimatedButton(
-              label: "Afvelja Allt ",
-              onPressed: _deselectAllGames,
-            ),
-            AnimatedButton(
-              label: "Vista Val",
-              onPressed: _saveSelection,
+            Expanded(
+              child: Scrollbar(
+                controller: _scrollController,
+                thumbVisibility: true,
+                thickness: 8,
+                radius: const Radius.circular(10),
+                interactive: true,
+                child: GridView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 3 / 4,
+                  ),
+                  itemCount: filteredGames.length,
+                  itemBuilder: (context, index) {
+                    final game = filteredGames[index];
+                    final isSelected = _selectedGames.contains(game);
+
+                    return GameCard(
+                      title: game.name,
+                      subtitle: "${game.minPlayers}-${game.maxPlayers} spilarar",
+                      description: game.explanation,
+                      imageUrl: game.imageUrl,
+                      isSelected: isSelected,
+                      onTap: () => _toggleSelection(game),
+                    );
+                  },
+                ),
+              ),
             ),
           ],
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          FloatingActionButton.extended(
+            onPressed: _selectAllGames,
+            backgroundColor: Colors.teal,
+            icon: const Icon(Icons.check_circle, color: Colors.white),
+            label: const Text("Velja Allt"),
+          ),
+          FloatingActionButton.extended(
+            onPressed: _deselectAllGames,
+            backgroundColor: Colors.redAccent,
+            icon: const Icon(Icons.cancel, color: Colors.white),
+            label: const Text("Afvelja Allt"),
+          ),
+          FloatingActionButton.extended(
+            onPressed: _saveSelection,
+            backgroundColor: Colors.blueAccent,
+            icon: const Icon(Icons.save, color: Colors.white),
+            label: const Text("Vista"),
+          ),
+        ],
       ),
     );
   }

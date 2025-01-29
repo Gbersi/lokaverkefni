@@ -27,7 +27,7 @@ class GradientCard extends StatelessWidget {
       padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Colors.blue, Colors.purple],
+          colors: [Colors.blue, Colors.grey],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

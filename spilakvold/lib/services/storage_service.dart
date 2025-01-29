@@ -1,7 +1,7 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '../providers/game_provider.dart';
+import '../providers/player_provider.dart';
 
 class StorageService {
   static const String _playersKey = 'Leikmenn';

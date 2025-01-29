@@ -29,7 +29,7 @@ class GameCard extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: isSelected
               ? const LinearGradient(
-            colors: [Colors.greenAccent, Colors.teal],
+            colors: [Colors.green, Colors.lightGreenAccent],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           )
