@@ -56,7 +56,7 @@ class PlayerSelectionPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SuggestionPage(
+                              builder: (context) => PlayerSuggestionPage(
                                 playerName: players[index],
                                 suggestions: suggestions,
                                 onDone: () {
@@ -80,12 +80,12 @@ class PlayerSelectionPage extends StatelessWidget {
   }
 }
 
-class SuggestionPage extends StatelessWidget {
+class PlayerSuggestionPage extends StatelessWidget {
   final String playerName;
   final List<String> suggestions;
   final VoidCallback onDone;
 
-  const SuggestionPage({
+  const PlayerSuggestionPage({
     required this.playerName,
     required this.suggestions,
     required this.onDone,

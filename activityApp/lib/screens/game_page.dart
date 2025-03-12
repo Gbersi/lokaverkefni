@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'dart:math';
+import '../Game Functions/pictionary_flow_page.dart';
 import '../providers/game_provider.dart';
 import '../Game Functions/mastermind_page.dart';
 import '../Game Functions/memorycardgame.dart';
@@ -12,6 +13,7 @@ import '../widgets/gradient_card.dart';
 import 'player_selection_page.dart';
 import '../Game Functions/colorhunt_page.dart';
 import '../Game Functions/hangman_page.dart';
+import 'package:activityapp/models/suggestion_page.dart';
 
 class GamePage extends StatefulWidget {
   final List<String> players;
@@ -63,7 +65,15 @@ class GamePageState extends State<GamePage> {
     setState(() {});
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_currentGame!.name == "Pictionary" || _currentGame!.name == "Charades") {
+      if (_currentGame!.name == "Pictionary") {
+        _navigateToGame(PictionaryFlowPage(
+          players: widget.players,
+          onQuit: () {
+            Navigator.pop(context);
+            _nextRound();
+          },
+        ));
+      } else if (_currentGame!.name == "Charades") {
         _navigateToPlayerSelection();
       } else if (_currentGame!.name == "Tic Tac Toe") {
         _navigateToGame(TicTacToePage(
@@ -122,17 +132,14 @@ class GamePageState extends State<GamePage> {
     });
   }
   void _navigateToPlayerSelection() {
+    // This function is now only used for Charades.
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PlayerSelectionPage(
           players: widget.players,
-          message: _currentGame!.name == "Pictionary"
-              ? "Choose a player to draw"
-              : "Choose a player to act",
-          suggestions: _currentGame!.name == "Pictionary"
-              ? ["Draw a tree", "Draw a house", "Draw a car"]
-              : ["Act like a cat", "Act like a teacher", "Act like a pilot"],
+          message: "Choose a player to act",
+          suggestions: ["Act like a cat", "Act like a teacher", "Act like a pilot"],
           onDone: () {
             Navigator.pop(context);
             _startTimer();
@@ -140,7 +147,8 @@ class GamePageState extends State<GamePage> {
         ),
       ),
     );
-  }
+
+}
 
   void _navigateToGame(Widget page) {
     Navigator.push(
